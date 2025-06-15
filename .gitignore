@@ -14,3 +14,5 @@ local.properties
 build/
 # Log Files
 *.log
+# Firebase config file
+app/google-services.json
