@@ -4,39 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.home.HomeFragment"
+    android:background="#ffffff">
 
     <!-- Top Bar -->
+
+    <!-- My Posts Icon -->
     <TextView
-        android:id="@+id/text_tutorly_profile_title"
+        android:id="@+id/tutorly_profile_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tutorly Profile"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:background="#FFFFFF"
         android:gravity="center_horizontal"
         android:padding="16dp"
-        android:background="#FFFFFF"
-        android:textColor="#808080" />
+        android:text="Tutorly"
+        android:textColor="#808080"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/myPostsButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_below="@id/tutorly_profile_title"
+        android:background="@android:color/transparent"
+        android:contentDescription="My Posts icon Button"
+        android:src="@drawable/ic_posts_placeholder" />
+
+
 
     <!-- Main Profile Content Area -->
     <LinearLayout
         android:id="@+id/profile_content_area"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/text_tutorly_profile_title"
+        android:layout_below="@id/tutorly_profile_title"
         android:layout_above="@+id/bottom_nav_layout"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#007AFF"> <!-- Blue background -->
+        android:background="#005A9C"> <!-- Blue background -->
 
+        <!-- Profile Image -->
         <ImageView
             android:id="@+id/image_profile_picture"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
+            android:contentDescription="My Profile image"
             android:src="@drawable/ic_profile_placeholder" /> <!-- Placeholder drawable -->
+
+        <!-- Name Field -->
+
+        <ImageButton
+            android:id="@+id/editProfileButton"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="25dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Edit my profile button"
+            android:src="@drawable/ic_edit_profile_button_placeholder"
+            android:text="Edit Profile" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,6 +89,7 @@
             android:textSize="16sp"
             tools:text="John Smith" />
 
+        <!-- Pronouns Field -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,15 +108,16 @@
             android:textSize="16sp"
             tools:text="He/Him" />
 
+        <!-- About Field -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bio"
+            android:text="About"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/text_profile_bio"
+            android:id="@+id/text_profile_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
@@ -116,7 +151,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_person_placeholder"
+                android:src="@drawable/ic_nav_profile_placeholder"
                 android:contentDescription="Profile"
                 app:tint="#808080"/>
 
@@ -139,7 +174,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_chat_placeholder"
+                android:src="@drawable/ic_nav_chat_placeholder"
                 android:contentDescription="Chat"
                 app:tint="#808080"/>
 
@@ -150,6 +185,30 @@
                 android:textSize="12sp"
                 android:textColor="#808080"/>
         </LinearLayout>
+
+        <!-- Message Item -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_nav_message_placeholder"
+                android:contentDescription="Message"
+                app:tint="#808080"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Message"
+                android:textSize="12sp"
+                android:textColor="#808080"/>
+        </LinearLayout>
+
 
         <!-- Settings Item -->
         <LinearLayout
@@ -162,7 +221,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:src="@drawable/ic_settings_placeholder"
+                android:src="@drawable/ic_nav_settings_placeholder"
                 android:contentDescription="Settings"
                 app:tint="#808080"/>
 
