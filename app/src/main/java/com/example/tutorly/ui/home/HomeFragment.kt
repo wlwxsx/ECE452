@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
         // Get references to the new TextViews from the binding
         val nameTextView: TextView = binding.textProfileName
         val pronounsTextView: TextView = binding.textProfilePronouns
-        val bioTextView: TextView = binding.textProfileBio
+        val bioTextView: TextView = binding.textProfileAbout
 
         // Observe LiveData from ViewModel and update UI
         homeViewModel.name.observe(viewLifecycleOwner) {
