@@ -117,7 +117,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/text_profile_about"
+            android:id="@+id/text_profile_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
