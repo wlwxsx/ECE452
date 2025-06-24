@@ -8,13 +8,13 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.tutorly.ui.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_profile"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.tutorly.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_forum"
         tools:layout="@layout/fragment_dashboard">
         <action
             android:id="@+id/action_navigation_dashboard_to_addPostFragment"
@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.tutorly.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_chat"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/addPostFragment"
@@ -43,4 +43,11 @@
             android:name="postId"
             app:argType="string" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_setting"
+        android:name="com.example.tutorly.ui.notifications.NotificationsFragment"
+        android:label="@string/title_setting"
+        tools:layout="@layout/fragment_setting" />
+
 </navigation>

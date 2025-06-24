@@ -39,6 +39,38 @@ class AddPostFragment : Fragment() {
         }
 
         val postButton = view.findViewById<Button>(R.id.post_button)
+        val titleInput = view.findViewById<EditText>(R.id.title_input)
+        val subjectInput = view.findViewById<EditText>(R.id.subject_input)
+        val codeInput = view.findViewById<EditText>(R.id.course_code_input)
+        val descriptionInput = view.findViewById<EditText>(R.id.description_input)
+
+        val inputWatcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                val allFilled = titleInput.text.isNotBlank()
+                        && subjectInput.text.isNotBlank()
+                        && codeInput.text.isNotBlank()
+                        && descriptionInput.text.isNotBlank()
+
+                postButton.isEnabled = allFilled
+                postButton.setBackgroundColor(
+                    if (allFilled) android.graphics.Color.parseColor("#4CAF50") // Active green
+                    else android.graphics.Color.parseColor("#CCCCCC")           // Disabled gray
+                )
+            }
+        }
+
+        // Attach watcher to all inputs
+        titleInput.addTextChangedListener(inputWatcher)
+        subjectInput.addTextChangedListener(inputWatcher)
+        codeInput.addTextChangedListener(inputWatcher)
+        descriptionInput.addTextChangedListener(inputWatcher)
+
+        // Set initial disabled state
+        postButton.isEnabled = false
+        postButton.setBackgroundColor(android.graphics.Color.parseColor("#CCCCCC"))
+
         postButton.setOnClickListener {
             savePostToFirebase()
         }
@@ -55,7 +87,7 @@ class AddPostFragment : Fragment() {
         val courseCode = view?.findViewById<EditText>(R.id.course_code_input)?.text.toString().uppercase()
         val message = view?.findViewById<EditText>(R.id.description_input)?.text.toString()
         val isProviding = view?.findViewById<RadioButton>(R.id.providing_radio)?.isChecked ?: false
-        val role = if (isProviding) "providing" else "looking for"
+        val role = if (isProviding) "providing" else "requesting"
 
 //        val posterId = auth.currentUser?.uid
 

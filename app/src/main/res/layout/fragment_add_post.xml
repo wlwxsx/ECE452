@@ -40,7 +40,7 @@
                 app:layout_constraintTop_toTopOf="@id/create_post_header"
                 app:layout_constraintBottom_toBottomOf="@id/create_post_header"
                 app:tint="@android:color/white"
-                android:contentDescription="Back" />
+                android:contentDescription="Go back" />
 
             <TextView
                 android:id="@+id/create_post_header"

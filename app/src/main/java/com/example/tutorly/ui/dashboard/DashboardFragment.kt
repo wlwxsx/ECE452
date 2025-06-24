@@ -85,7 +85,7 @@ class DashboardFragment : Fragment() {
         courseCodeInput.setText(currentCourseCode)
         when(currentHelpType) {
             "providing" -> helpTypeRadioGroup.check(R.id.offering_radio_filter)
-            "looking for" -> helpTypeRadioGroup.check(R.id.requesting_radio_filter)
+            "requesting" -> helpTypeRadioGroup.check(R.id.requesting_radio_filter)
             else -> helpTypeRadioGroup.check(R.id.any_radio_filter)
         }
 
@@ -96,7 +96,7 @@ class DashboardFragment : Fragment() {
             val helpTypeRadioButton = dialogView.findViewById<RadioButton>(selectedHelpTypeId)
             currentHelpType = when (helpTypeRadioButton.text.toString()) {
                 "Offering" -> "providing"
-                "Requesting" -> "looking for"
+                "Requesting" -> "requesting"
                 else -> null
             }
             
