@@ -36,4 +36,40 @@ class UserRepository {
             Result.failure(e)
         }
     }
+    
+    //get user profile from Firestore
+    suspend fun getUserById(userId: String): Result<User?> {
+        return try {
+            val document = db.collection(USERS_COLLECTION)
+                .document(userId)
+                .get()
+                .await()
+            
+            if (document.exists()) {
+                val userData = document.data
+                val user = User(
+                    userid = userData?.get("userid") as? String ?: "",
+                    name = userData?.get("name") as? String ?: "",
+                    program = userData?.get("program") as? String ?: "",
+                    year = userData?.get("year") as? String ?: "",
+                    email = userData?.get("email") as? String ?: "",
+                    contact = userData?.get("contact") as? String ?: "",
+                    bio = userData?.get("bio") as? String ?: "",
+                    availability = Availability(), // Default for now
+                    isAdmin = userData?.get("isAdmin") as? Boolean ?: false,
+                    likes = (userData?.get("likes") as? Long)?.toInt() ?: 0,
+                    password = "", // Never retrieve password
+                    tutoredCourses = userData?.get("tutoredCourses") as? List<String> ?: emptyList()
+                )
+                Log.d(TAG, "User retrieved successfully: $userId")
+                Result.success(user)
+            } else {
+                Log.d(TAG, "User not found: $userId")
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error retrieving user: $userId", e)
+            Result.failure(e)
+        }
+    }
 } 
