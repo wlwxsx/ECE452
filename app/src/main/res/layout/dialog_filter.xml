@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/edit_text_background">
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Filter:"-->
+<!--        android:textSize="20sp"-->
+<!--        android:textStyle="bold"-->
+<!--        android:layout_marginBottom="16dp" />-->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Subject"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/subject_filter_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ECE"
+        android:inputType="textCapCharacters"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Course Code"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/course_code_filter_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="140"
+        android:inputType="text"
+        android:background="@drawable/edit_text_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Role:"
+        android:textSize="16sp" />
+
+    <RadioGroup
+        android:id="@+id/help_type_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="24dp">
+
+        <RadioButton
+            android:id="@+id/offering_radio_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Offering" />
+
+        <RadioButton
+            android:id="@+id/requesting_radio_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Requesting" />
+        
+        <RadioButton
+            android:id="@+id/any_radio_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Any" 
+            android:checked="true"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/clear_filters_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Clear"
+            android:backgroundTint="#005A9C"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/apply_filters_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#005A9C"
+            android:text="Apply" />
+
+    </LinearLayout>
+
+</LinearLayout> 
