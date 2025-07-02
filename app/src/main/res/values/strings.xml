@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Tutorly</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_forum">Forum</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_setting">Setting</string>
     <string name="login">Login</string>
     <string name="email">email</string>
     <string name="password">password</string>
