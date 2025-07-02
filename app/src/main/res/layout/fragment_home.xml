@@ -42,7 +42,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tutorly_profile_title"
-        android:layout_above="@+id/bottom_nav_layout"
         android:orientation="vertical"
         android:padding="16dp"
         android:background="#005A9C"> <!-- Blue background -->

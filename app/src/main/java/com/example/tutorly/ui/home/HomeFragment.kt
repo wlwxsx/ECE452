@@ -29,20 +29,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // Get references to the new TextViews from the binding
+        // get reference to the name TextView from the binding
         val nameTextView: TextView = binding.textProfileName
-        val pronounsTextView: TextView = binding.textProfilePronouns
-        val bioTextView: TextView = binding.textProfileAbout
 
         // Observe LiveData from ViewModel and update UI
         homeViewModel.name.observe(viewLifecycleOwner) {
             nameTextView.text = it
-        }
-        homeViewModel.pronouns.observe(viewLifecycleOwner) {
-            pronounsTextView.text = it
-        }
-        homeViewModel.bio.observe(viewLifecycleOwner) {
-            bioTextView.text = it
         }
 
         return root
