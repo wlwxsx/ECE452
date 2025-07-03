@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         auth = FirebaseAuth.getInstance()
-        button = findViewById(R.id.logout)
-        textView = findViewById(R.id.user_details)
+        //button = findViewById(R.id.logout)
+       // textView = findViewById(R.id.user_details)
 
         //if user is not logged in, go to the login page
         val currentUser = auth.currentUser
