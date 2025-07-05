@@ -49,26 +49,15 @@
         <!-- Profile Image -->
         <ImageView
             android:id="@+id/image_profile_picture"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="216dp"
+            android:layout_height="210dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:contentDescription="My Profile image"
-            android:src="@drawable/ic_profile_placeholder" /> <!-- Placeholder drawable -->
+            android:src="@drawable/ic_profile_placeholder"
+            app:srcCompat="@drawable/account_box_24px" /> <!-- Placeholder drawable -->
 
         <!-- Name Field -->
-
-        <ImageButton
-            android:id="@+id/editProfileButton"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="25dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Edit my profile button"
-            android:src="@drawable/ic_edit_profile_button_placeholder"
-            android:text="Edit Profile" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -118,12 +107,18 @@
         <TextView
             android:id="@+id/text_profile_bio"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="102dp"
             android:background="#FFFFFF"
             android:padding="8dp"
             android:textColor="#000000"
             android:textSize="16sp"
             tools:text="..." />
+
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Logout" />
 
     </LinearLayout>
 

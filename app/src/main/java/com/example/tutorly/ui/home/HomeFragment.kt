@@ -1,5 +1,8 @@
 package com.example.tutorly.ui.home
 
+import android.content.Intent
+import com.google.firebase.auth.FirebaseAuth
+import com.example.tutorly.Login
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +41,19 @@ class HomeFragment : Fragment() {
         }
 
         return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        homeViewModel.name.observe(viewLifecycleOwner) {
+            binding.textProfileName.text = it
+        }
+        binding.logout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(requireContext(), Login::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {
