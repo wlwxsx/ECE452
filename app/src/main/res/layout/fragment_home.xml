@@ -103,6 +103,7 @@
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#005A9C"
             android:text="Logout" />
 
     </LinearLayout>
