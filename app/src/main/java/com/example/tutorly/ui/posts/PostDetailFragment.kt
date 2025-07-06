@@ -16,9 +16,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
+import com.example.tutorly.UserRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.UUID
@@ -26,6 +31,7 @@ import java.util.UUID
 class PostDetailFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var userRepository: UserRepository
     private var postId: String? = null
     private lateinit var commentInput: EditText
     private lateinit var postCommentButton: Button
@@ -45,6 +51,7 @@ class PostDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         db = FirebaseFirestore.getInstance()
+        userRepository = UserRepository.getInstance()
         return inflater.inflate(R.layout.fragment_post_detail, container, false)
     }
 
@@ -75,10 +82,12 @@ class PostDetailFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val isContentNotEmpty = s?.toString()?.trim()?.isNotEmpty() == true
                 postCommentButton.isEnabled = isContentNotEmpty
-                postCommentButton.backgroundTintList = if (isContentNotEmpty) {
-                    androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
+                
+                // Update button color based on content
+                if (isContentNotEmpty) {
+                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
                 } else {
-                    androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
+                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
                 }
             }
         })
@@ -91,7 +100,7 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setupCommentsRecyclerView() {
-        commentAdapter = CommentAdapter(commentsList)
+        commentAdapter = CommentAdapter(commentsList, userRepository)
         commentsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = commentAdapter
@@ -125,19 +134,22 @@ class PostDetailFragment : Fragment() {
         // Disable button while posting
         postCommentButton.isEnabled = false
         postCommentButton.text = "POSTING..."
-
+        
         db.collection("comments")
             .add(comment)
             .addOnSuccessListener { documentReference ->
                 Toast.makeText(context, "Comment posted successfully!", Toast.LENGTH_SHORT).show()
                 commentInput.setText("")
                 postCommentButton.text = "POST"
+                postCommentButton.isEnabled = false
+                postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
                 fetchComments() // Refresh comments after posting
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error posting comment: ${exception.message}", Toast.LENGTH_LONG).show()
                 postCommentButton.isEnabled = true
                 postCommentButton.text = "POST"
+                postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
             }
     }
 
@@ -152,13 +164,38 @@ class PostDetailFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val post = document.toObject(Post::class.java)
-                    view?.let {
-                        it.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
-                        it.findViewById<TextView>(R.id.post_title).text = post?.title
-                        it.findViewById<TextView>(R.id.author_info).text = "Posted by: ${post?.posterId?.take(6)}..."
-                        it.findViewById<TextView>(R.id.post_message).text = post?.message
+                    view?.let { view ->
+                        view.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
+                        view.findViewById<TextView>(R.id.post_title).text = post?.title
+                        view.findViewById<TextView>(R.id.post_message).text = post?.message
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
-                        it.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
+                        view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
+                        
+                        // Fetch and display post author name
+                        val authorInfoTextView = view.findViewById<TextView>(R.id.author_info)
+                        if (post?.posterId?.isNotBlank() == true) {
+                            authorInfoTextView.text = "Posted by: Loading..."
+                            
+                            CoroutineScope(Dispatchers.IO).launch {
+                                userRepository.getUserById(post.posterId)
+                                    .onSuccess { user ->
+                                        withContext(Dispatchers.Main) {
+                                            if (user != null && user.name.isNotBlank()) {
+                                                authorInfoTextView.text = "Posted by: ${user.name}"
+                                            } else {
+                                                authorInfoTextView.text = "Posted by: User_${post.posterId.take(6)}"
+                                            }
+                                        }
+                                    }
+                                    .onFailure {
+                                        withContext(Dispatchers.Main) {
+                                            authorInfoTextView.text = "Posted by: User_${post.posterId.take(6)}"
+                                        }
+                                    }
+                            }
+                        } else {
+                            authorInfoTextView.text = "Posted by: Anonymous"
+                        }
                     }
                     fetchComments() // Fetch comments after post details are loaded
                 } else {
@@ -175,7 +212,6 @@ class PostDetailFragment : Fragment() {
 
         db.collection("comments")
             .whereEqualTo("postId", postId!!)
-            .orderBy("timeStamp", Query.Direction.ASCENDING)
             .get()
             .addOnSuccessListener { result ->
                 commentsList.clear()
@@ -183,10 +219,12 @@ class PostDetailFragment : Fragment() {
                     val comment = document.toObject(Comment::class.java)
                     commentsList.add(comment)
                 }
+                // Sort manually by timestamp (oldest first)
+                commentsList.sortBy { it.timeStamp }
                 commentAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error fetching comments: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error fetching comments: ${exception.message}", Toast.LENGTH_LONG).show()
             }
     }
 } 
