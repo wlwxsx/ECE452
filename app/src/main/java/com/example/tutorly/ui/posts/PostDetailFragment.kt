@@ -13,18 +13,32 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
+import com.example.tutorly.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.UUID
 
 class PostDetailFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var userRepository: UserRepository
     private var postId: String? = null
     private lateinit var commentInput: EditText
     private lateinit var postCommentButton: Button
+    private lateinit var commentsRecyclerView: RecyclerView
+    private lateinit var commentAdapter: CommentAdapter
+    private lateinit var commentsLabel: TextView
+    private val commentsList = mutableListOf<Map<String, Any>>() // Only for UI display, not persistent storage
+    private var commentsListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +52,7 @@ class PostDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         db = FirebaseFirestore.getInstance()
+        userRepository = UserRepository.getInstance()
         return inflater.inflate(R.layout.fragment_post_detail, container, false)
     }
 
@@ -51,7 +66,10 @@ class PostDetailFragment : Fragment() {
 
         commentInput = view.findViewById(R.id.comment_input)
         postCommentButton = view.findViewById(R.id.post_comment_button)
+        commentsRecyclerView = view.findViewById(R.id.comments_recycler_view)
+        commentsLabel = view.findViewById(R.id.comments_label)
 
+        setupCommentsRecyclerView()
         setupCommentInput()
         setupPostCommentButton()
         fetchPostDetails()
@@ -66,10 +84,12 @@ class PostDetailFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val isContentNotEmpty = s?.toString()?.trim()?.isNotEmpty() == true
                 postCommentButton.isEnabled = isContentNotEmpty
-                postCommentButton.backgroundTintList = if (isContentNotEmpty) {
-                    androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
+                
+                // Update button color based on content
+                if (isContentNotEmpty) {
+                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
                 } else {
-                    androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
+                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
                 }
             }
         })
@@ -78,6 +98,15 @@ class PostDetailFragment : Fragment() {
     private fun setupPostCommentButton() {
         postCommentButton.setOnClickListener {
             postComment()
+        }
+    }
+
+    private fun setupCommentsRecyclerView() {
+        commentAdapter = CommentAdapter(commentsList, userRepository)
+        commentsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = commentAdapter
+            setHasFixedSize(false)
         }
     }
 
@@ -93,30 +122,41 @@ class PostDetailFragment : Fragment() {
             return
         }
 
-        // For now, using a random UUID as userId. In a real app, you'd get this from authentication
-        val userId = UUID.randomUUID().toString()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(context, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
+            return
+        }
         
-        val comment = Comment(
-            content = content,
-            postId = postId!!,
-            userId = userId
+        // Create comment data with proper server timestamp
+        val commentData = hashMapOf(
+            "content" to content,
+            "postId" to postId!!,
+            "userId" to userId,
+            "timeStamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
         )
 
         // Disable button while posting
         postCommentButton.isEnabled = false
         postCommentButton.text = "POSTING..."
-
+        
         db.collection("comments")
-            .add(comment)
+            .add(commentData)
             .addOnSuccessListener { documentReference ->
                 Toast.makeText(context, "Comment posted successfully!", Toast.LENGTH_SHORT).show()
                 commentInput.setText("")
                 postCommentButton.text = "POST"
+                postCommentButton.isEnabled = false
+                postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
+                
+                // Refresh comments after posting
+                fetchComments()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error posting comment: ${exception.message}", Toast.LENGTH_LONG).show()
                 postCommentButton.isEnabled = true
                 postCommentButton.text = "POST"
+                postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
             }
     }
 
@@ -131,14 +171,40 @@ class PostDetailFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (document != null && document.exists()) {
                     val post = document.toObject(Post::class.java)
-                    view?.let {
-                        it.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
-                        it.findViewById<TextView>(R.id.post_title).text = post?.title
-                        it.findViewById<TextView>(R.id.author_info).text = "Posted by: ${post?.posterId?.take(6)}..."
-                        it.findViewById<TextView>(R.id.post_message).text = post?.message
+                    view?.let { view ->
+                        view.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
+                        view.findViewById<TextView>(R.id.post_title).text = post?.title
+                        view.findViewById<TextView>(R.id.post_message).text = post?.message
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
-                        it.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
+                        view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
+                        
+                        // Fetch and display post author name
+                        val authorInfoTextView = view.findViewById<TextView>(R.id.author_info)
+                        if (post?.posterId?.isNotBlank() == true) {
+                            authorInfoTextView.text = "Posted by: Loading..."
+                            
+                            CoroutineScope(Dispatchers.IO).launch {
+                                userRepository.getUserById(post.posterId)
+                                    .onSuccess { user ->
+                                        withContext(Dispatchers.Main) {
+                                            if (user != null && user.name.isNotBlank()) {
+                                                authorInfoTextView.text = "Posted by: ${user.name}"
+                                            } else {
+                                                authorInfoTextView.text = "Posted by: User_${post.posterId.take(6)}"
+                                            }
+                                        }
+                                    }
+                                    .onFailure {
+                                        withContext(Dispatchers.Main) {
+                                            authorInfoTextView.text = "Posted by: User_${post.posterId.take(6)}"
+                                        }
+                                    }
+                            }
+                        } else {
+                            authorInfoTextView.text = "Posted by: Anonymous"
+                        }
                     }
+                    fetchComments() // Fetch comments after post details are loaded
                 } else {
                     Toast.makeText(context, "Post not found.", Toast.LENGTH_SHORT).show()
                 }
@@ -146,5 +212,57 @@ class PostDetailFragment : Fragment() {
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error getting post details: ${exception.message}", Toast.LENGTH_LONG).show()
             }
+    }
+
+    private fun fetchComments() {
+        if (postId == null) return
+
+        // Remove any existing listener to avoid duplicates
+        commentsListener?.remove()
+
+        // Set up real-time listener for comments with balanced caching
+        commentsListener = db.collection("comments")
+            .whereEqualTo("postId", postId!!)
+            .addSnapshotListener { snapshots, error ->
+                if (error != null) {
+                    Toast.makeText(context, "Error fetching comments: ${error.message}", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshots != null) {
+                    android.util.Log.d("PostDetail", "Comments received: ${snapshots.documents.size} comments")
+                    // Clear the local list and populate from Firebase data
+                    commentsList.clear()
+                    for (document in snapshots.documents) {
+                        // Work directly with Firebase document data
+                        val commentData = document.data
+                        if (commentData != null) {
+                            commentsList.add(commentData)
+                        }
+                    }
+                    
+                    // Sort comments by timestamp manually (oldest first)
+                    commentsList.sortBy { commentData ->
+                        val timestamp = commentData["timeStamp"] as? com.google.firebase.Timestamp
+                        timestamp?.toDate()?.time ?: 0L
+                    }
+                    
+                    // Show/hide comments section header based on whether there are comments
+                    if (commentsList.isEmpty()) {
+                        commentsLabel.visibility = View.GONE
+                    } else {
+                        commentsLabel.visibility = View.VISIBLE
+                    }
+                    
+                    // Notify adapter that data has changed
+                    commentAdapter.notifyDataSetChanged()
+                }
+            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up the Firebase listener to prevent memory leaks
+        commentsListener?.remove()
     }
 } 

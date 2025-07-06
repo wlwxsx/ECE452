@@ -89,10 +89,7 @@ class AddPostFragment : Fragment() {
         val isProviding = view?.findViewById<RadioButton>(R.id.providing_radio)?.isChecked ?: false
         val role = if (isProviding) "providing" else "requesting"
 
-//        val posterId = auth.currentUser?.uid
-
-        //temp
-        val posterId = "testAdmin";
+        val posterId = auth.currentUser?.uid
 
         if (posterId == null) {
             Toast.makeText(context, "You must be logged in to post.", Toast.LENGTH_SHORT).show()
