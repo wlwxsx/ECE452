@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.UUID
 
 class PostDetailFragment : Fragment() {
 
@@ -37,7 +36,9 @@ class PostDetailFragment : Fragment() {
     private lateinit var postCommentButton: Button
     private lateinit var commentsRecyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
-    private val commentsList = mutableListOf<Comment>()
+    private lateinit var commentsLabel: TextView
+    private val commentsList = mutableListOf<Map<String, Any>>() // Only for UI display, not persistent storage
+    private var commentsListener: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,7 @@ class PostDetailFragment : Fragment() {
         commentInput = view.findViewById(R.id.comment_input)
         postCommentButton = view.findViewById(R.id.post_comment_button)
         commentsRecyclerView = view.findViewById(R.id.comments_recycler_view)
+        commentsLabel = view.findViewById(R.id.comments_label)
 
         setupCommentsRecyclerView()
         setupCommentInput()
@@ -125,10 +127,13 @@ class PostDetailFragment : Fragment() {
             Toast.makeText(context, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
             return
         }
-        val comment = Comment(
-            content = content,
-            postId = postId!!,
-            userId = userId
+        
+        // Create comment data with proper server timestamp
+        val commentData = hashMapOf(
+            "content" to content,
+            "postId" to postId!!,
+            "userId" to userId,
+            "timeStamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
         )
 
         // Disable button while posting
@@ -136,14 +141,16 @@ class PostDetailFragment : Fragment() {
         postCommentButton.text = "POSTING..."
         
         db.collection("comments")
-            .add(comment)
+            .add(commentData)
             .addOnSuccessListener { documentReference ->
                 Toast.makeText(context, "Comment posted successfully!", Toast.LENGTH_SHORT).show()
                 commentInput.setText("")
                 postCommentButton.text = "POST"
                 postCommentButton.isEnabled = false
                 postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
-                fetchComments() // Refresh comments after posting
+                
+                // Refresh comments after posting
+                fetchComments()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error posting comment: ${exception.message}", Toast.LENGTH_LONG).show()
@@ -210,21 +217,52 @@ class PostDetailFragment : Fragment() {
     private fun fetchComments() {
         if (postId == null) return
 
-        db.collection("comments")
+        // Remove any existing listener to avoid duplicates
+        commentsListener?.remove()
+
+        // Set up real-time listener for comments with balanced caching
+        commentsListener = db.collection("comments")
             .whereEqualTo("postId", postId!!)
-            .get()
-            .addOnSuccessListener { result ->
-                commentsList.clear()
-                for (document in result) {
-                    val comment = document.toObject(Comment::class.java)
-                    commentsList.add(comment)
+            .addSnapshotListener { snapshots, error ->
+                if (error != null) {
+                    Toast.makeText(context, "Error fetching comments: ${error.message}", Toast.LENGTH_LONG).show()
+                    return@addSnapshotListener
                 }
-                // Sort manually by timestamp (oldest first)
-                commentsList.sortBy { it.timeStamp }
-                commentAdapter.notifyDataSetChanged()
+
+                if (snapshots != null) {
+                    android.util.Log.d("PostDetail", "Comments received: ${snapshots.documents.size} comments")
+                    // Clear the local list and populate from Firebase data
+                    commentsList.clear()
+                    for (document in snapshots.documents) {
+                        // Work directly with Firebase document data
+                        val commentData = document.data
+                        if (commentData != null) {
+                            commentsList.add(commentData)
+                        }
+                    }
+                    
+                    // Sort comments by timestamp manually (oldest first)
+                    commentsList.sortBy { commentData ->
+                        val timestamp = commentData["timeStamp"] as? com.google.firebase.Timestamp
+                        timestamp?.toDate()?.time ?: 0L
+                    }
+                    
+                    // Show/hide comments section header based on whether there are comments
+                    if (commentsList.isEmpty()) {
+                        commentsLabel.visibility = View.GONE
+                    } else {
+                        commentsLabel.visibility = View.VISIBLE
+                    }
+                    
+                    // Notify adapter that data has changed
+                    commentAdapter.notifyDataSetChanged()
+                }
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error fetching comments: ${exception.message}", Toast.LENGTH_LONG).show()
-            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up the Firebase listener to prevent memory leaks
+        commentsListener?.remove()
     }
 } 

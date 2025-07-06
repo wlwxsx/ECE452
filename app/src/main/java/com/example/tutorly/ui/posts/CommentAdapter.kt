@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.UserRepository
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,10 +15,9 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.abs
 
 class CommentAdapter(
-    private val comments: List<Comment>,
+    private val comments: List<Map<String, Any>>,
     private val userRepository: UserRepository
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
@@ -33,38 +33,43 @@ class CommentAdapter(
     }
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-        val comment = comments[position]
+        val commentData = comments[position]
+        
+        // Extract data directly from Firebase document
+        val content = commentData["content"] as? String ?: ""
+        val userId = commentData["userId"] as? String ?: ""
+        val timeStamp = commentData["timeStamp"] as? Timestamp
         
         // Display comment content
-        holder.commentContent.text = comment.content
+        holder.commentContent.text = content
 
         // Display timestamp in a relative format
-        comment.timeStamp?.let { timestamp ->
-            holder.commentTimestamp.text = formatRelativeTime(timestamp)
+        timeStamp?.let { timestamp ->
+            holder.commentTimestamp.text = formatRelativeTime(timestamp.toDate())
         } ?: run {
             holder.commentTimestamp.text = "Just now"
         }
 
         // Fetch and display user name
-        if (comment.userId.isNotBlank()) {
+        if (userId.isNotBlank()) {
             // Show loading placeholder
             holder.commentAuthor.text = "Loading..."
             
             // Fetch user data asynchronously
             CoroutineScope(Dispatchers.IO).launch {
-                userRepository.getUserById(comment.userId)
+                userRepository.getUserById(userId)
                     .onSuccess { user ->
                         withContext(Dispatchers.Main) {
                             if (user != null && user.name.isNotBlank()) {
                                 holder.commentAuthor.text = user.name
                             } else {
-                                holder.commentAuthor.text = "User_${comment.userId.take(6)}"
+                                holder.commentAuthor.text = "User_${userId.take(6)}"
                             }
                         }
                     }
                     .onFailure {
                         withContext(Dispatchers.Main) {
-                            holder.commentAuthor.text = "User_${comment.userId.take(6)}"
+                            holder.commentAuthor.text = "User_${userId.take(6)}"
                         }
                     }
             }
