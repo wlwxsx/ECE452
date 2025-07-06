@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.tutorly.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -93,9 +94,11 @@ class PostDetailFragment : Fragment() {
             return
         }
 
-        // For now, using a random UUID as userId. In a real app, you'd get this from authentication
-        val userId = UUID.randomUUID().toString()
-        
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(context, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
+            return
+        }
         val comment = Comment(
             content = content,
             postId = postId!!,
