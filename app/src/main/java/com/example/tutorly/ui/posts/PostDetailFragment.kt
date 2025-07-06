@@ -13,9 +13,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.UUID
@@ -26,6 +29,9 @@ class PostDetailFragment : Fragment() {
     private var postId: String? = null
     private lateinit var commentInput: EditText
     private lateinit var postCommentButton: Button
+    private lateinit var commentsRecyclerView: RecyclerView
+    private lateinit var commentAdapter: CommentAdapter
+    private val commentsList = mutableListOf<Comment>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +58,9 @@ class PostDetailFragment : Fragment() {
 
         commentInput = view.findViewById(R.id.comment_input)
         postCommentButton = view.findViewById(R.id.post_comment_button)
+        commentsRecyclerView = view.findViewById(R.id.comments_recycler_view)
 
+        setupCommentsRecyclerView()
         setupCommentInput()
         setupPostCommentButton()
         fetchPostDetails()
@@ -79,6 +87,15 @@ class PostDetailFragment : Fragment() {
     private fun setupPostCommentButton() {
         postCommentButton.setOnClickListener {
             postComment()
+        }
+    }
+
+    private fun setupCommentsRecyclerView() {
+        commentAdapter = CommentAdapter(commentsList)
+        commentsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = commentAdapter
+            setHasFixedSize(false)
         }
     }
 
@@ -115,6 +132,7 @@ class PostDetailFragment : Fragment() {
                 Toast.makeText(context, "Comment posted successfully!", Toast.LENGTH_SHORT).show()
                 commentInput.setText("")
                 postCommentButton.text = "POST"
+                fetchComments() // Refresh comments after posting
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error posting comment: ${exception.message}", Toast.LENGTH_LONG).show()
@@ -142,12 +160,33 @@ class PostDetailFragment : Fragment() {
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
                         it.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
                     }
+                    fetchComments() // Fetch comments after post details are loaded
                 } else {
                     Toast.makeText(context, "Post not found.", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error getting post details: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun fetchComments() {
+        if (postId == null) return
+
+        db.collection("comments")
+            .whereEqualTo("postId", postId!!)
+            .orderBy("timeStamp", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                commentsList.clear()
+                for (document in result) {
+                    val comment = document.toObject(Comment::class.java)
+                    commentsList.add(comment)
+                }
+                commentAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "Error fetching comments: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
 } 
