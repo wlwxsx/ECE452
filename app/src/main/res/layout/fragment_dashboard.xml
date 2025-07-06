@@ -7,22 +7,10 @@
     android:background="@android:color/white"
     tools:context=".ui.dashboard.DashboardFragment">
 
-    <TextView
-        android:id="@+id/tutorly_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Tutorly"
-        android:textColor="#808080"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
     <LinearLayout
         android:id="@+id/postings_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tutorly_title"
         android:background="#005A9C"
         android:gravity="center_vertical"
         android:orientation="horizontal"

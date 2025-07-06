@@ -10,18 +10,6 @@
     <!-- Top Bar -->
 
     <!-- My Posts Icon -->
-    <TextView
-        android:id="@+id/tutorly_profile_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:gravity="center_horizontal"
-        android:padding="16dp"
-        android:text="Tutorly"
-        android:textColor="#808080"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
     <ImageButton
         android:id="@+id/myPostsButton"
         android:layout_width="40dp"
@@ -29,8 +17,6 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
         android:layout_marginTop="25dp"
-        android:layout_below="@id/tutorly_profile_title"
-        android:background="@android:color/transparent"
         android:contentDescription="My Posts icon Button"
         android:src="@drawable/ic_posts_placeholder" />
 
@@ -41,7 +27,6 @@
         android:id="@+id/profile_content_area"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tutorly_profile_title"
         android:orientation="vertical"
         android:padding="16dp"
         android:background="#005A9C"> <!-- Blue background -->
@@ -54,7 +39,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:contentDescription="My Profile image"
-            android:src="@drawable/ic_profile_placeholder"
+            android:src="@drawable/account_box_24px"
             app:srcCompat="@drawable/account_box_24px" /> <!-- Placeholder drawable -->
 
         <!-- Name Field -->
