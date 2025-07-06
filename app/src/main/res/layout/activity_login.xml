@@ -31,7 +31,9 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        app:boxStrokeColor="#005A9C"
+        app:hintTextColor="#005A9C">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
@@ -42,7 +44,9 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:gravity="center"
+        app:boxStrokeColor="#005A9C"
+        app:hintTextColor="#005A9C">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/password"
@@ -56,6 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
+        android:backgroundTint="#005A9C"
         />
 
     <TextView
