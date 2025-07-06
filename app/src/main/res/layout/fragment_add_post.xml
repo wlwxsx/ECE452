@@ -7,21 +7,9 @@
     android:background="@android:color/white"
     tools:context=".ui.posts.AddPostFragment">
 
-    <TextView
-        android:id="@+id/tutorly_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Tutorly"
-        android:textColor="#808080"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tutorly_title"
         android:background="#005A9C"
         android:fillViewport="true">
 
