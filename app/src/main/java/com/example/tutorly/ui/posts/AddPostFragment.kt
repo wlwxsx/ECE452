@@ -11,6 +11,7 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.tutorly.Constants
 import com.example.tutorly.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -34,7 +35,8 @@ class AddPostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (auth.currentUser == null) {
+        // Skip Firebase auth calls when bypassing for testing
+        if (!Constants.BYPASS_AUTH_FOR_TESTING && auth.currentUser == null) {
             auth.createUserWithEmailAndPassword("admin@tutorly.com", "password")
         }
 
@@ -89,10 +91,11 @@ class AddPostFragment : Fragment() {
         val isProviding = view?.findViewById<RadioButton>(R.id.providing_radio)?.isChecked ?: false
         val role = if (isProviding) "providing" else "requesting"
 
-//        val posterId = auth.currentUser?.uid
-
-        //temp
-        val posterId = "testAdmin";
+        val posterId = if (Constants.BYPASS_AUTH_FOR_TESTING) {
+            "testAdmin"
+        } else {
+            auth.currentUser?.uid
+        }
 
         if (posterId == null) {
             Toast.makeText(context, "You must be logged in to post.", Toast.LENGTH_SHORT).show()

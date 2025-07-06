@@ -30,6 +30,10 @@ class Login : AppCompatActivity() {
     // if user is logged in, go to the main menu page
     public override fun onStart() {
         super.onStart()
+        // Skip Firebase user check when bypassing auth for testing
+        if (Constants.BYPASS_AUTH_FOR_TESTING) {
+            return
+        }
         val currentUser = auth.currentUser
         if (currentUser != null) {
             navigateToMainActivity()
@@ -68,6 +72,14 @@ class Login : AppCompatActivity() {
                 Toast.makeText(this@Login, "Enter password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            
+            // Bypass Firebase Auth for testing
+            if (Constants.BYPASS_AUTH_FOR_TESTING) {
+                Log.d(TAG, "Bypassing Firebase Auth for testing")
+                navigateToMainActivity()
+                return@setOnClickListener
+            }
+            
             //firebase login, success and fails
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this@Login) { task ->

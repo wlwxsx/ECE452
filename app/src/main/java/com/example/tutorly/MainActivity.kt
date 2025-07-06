@@ -28,12 +28,16 @@ class MainActivity : AppCompatActivity() {
 
         //if user is not logged in, go to the login page
         val currentUser = auth.currentUser
-        if (currentUser == null) {
+        if (currentUser == null && !Constants.BYPASS_AUTH_FOR_TESTING) {
             val intent = Intent(applicationContext, Login::class.java)
             startActivity(intent)
             finish()
         } else {
-            Log.d("MainActivity", "User is logged in: ${currentUser.email}")
+            if (Constants.BYPASS_AUTH_FOR_TESTING) {
+                Log.d("MainActivity", "Running in bypass mode for testing")
+            } else {
+                Log.d("MainActivity", "User is logged in: ${currentUser?.email}")
+            }
         }
 
         //bottom navigation config

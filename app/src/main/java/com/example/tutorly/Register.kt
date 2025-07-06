@@ -37,6 +37,10 @@ class Register : AppCompatActivity() {
     // if user is logged in, go to the main menu page
     public override fun onStart() {
         super.onStart()
+        // Skip Firebase user check when bypassing auth for testing
+        if (Constants.BYPASS_AUTH_FOR_TESTING) {
+            return
+        }
         val currentUser = auth.currentUser
         if (currentUser != null) {
             navigateToMainActivity()
@@ -83,6 +87,13 @@ class Register : AppCompatActivity() {
         val password = editTextPassword.text.toString()
         
         if (!validateInputs(name, email, password)) {
+            return
+        }
+        
+        // Bypass Firebase Auth for testing
+        if (Constants.BYPASS_AUTH_FOR_TESTING) {
+            Log.d(TAG, "Bypassing Firebase Auth for testing")
+            navigateToMainActivity()
             return
         }
         
