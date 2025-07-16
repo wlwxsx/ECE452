@@ -1,35 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res/auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     tools:context=".ui.dashboard.DashboardFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/postings_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#005A9C"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:padding="12dp">
 
         <ImageButton
             android:id="@+id/filter_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Filter posts"
             android:src="@drawable/ic_filter"
-            app:tint="@android:color/white" />
+            android:tint="@android:color/white" />
+
+        <Button
+            android:id="@+id/my_posts_button"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_toEndOf="@id/filter_button"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/edit_text_background"
+            android:text="My Posts"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:backgroundTint="@null"
+            style="?android:attr/borderlessButtonStyle" />
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_centerInParent="true"
             android:text="POSTINGS"
             android:textColor="@android:color/white"
             android:textSize="20sp"
@@ -39,11 +54,13 @@
             android:id="@+id/add_post_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Add new post"
             android:src="@drawable/ic_add"
-            app:tint="@android:color/white" />
-    </LinearLayout>
+            android:tint="@android:color/white" />
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts_recycler_view"
