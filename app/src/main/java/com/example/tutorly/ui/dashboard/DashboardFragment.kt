@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.databinding.FragmentDashboardBinding
 import com.example.tutorly.ui.posts.Post
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -28,13 +29,16 @@ class DashboardFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     private lateinit var postsRecyclerView: RecyclerView
     private lateinit var postsList: ArrayList<Post>
     private lateinit var postAdapter: PostAdapter
+    private lateinit var myPostsButton: Button
 
     private var currentSubject: String? = null
     private var currentCourseCode: String? = null
     private var currentHelpType: String? = null
+    private var showMyPostsOnly: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +47,9 @@ class DashboardFragment : Fragment() {
     ): View {
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         val addPostButton: ImageButton = binding.addPostButton
         addPostButton.setOnClickListener {
@@ -54,7 +61,13 @@ class DashboardFragment : Fragment() {
             showFilterDialog()
         }
 
-        db = FirebaseFirestore.getInstance()
+        myPostsButton = binding.myPostsButton
+        myPostsButton.setOnClickListener {
+            toggleMyPosts()
+        }
+        
+        // Set initial button appearance
+        updateMyPostsButtonAppearance()
 
         postsRecyclerView = binding.postsRecyclerView
         postsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -67,6 +80,23 @@ class DashboardFragment : Fragment() {
         fetchPosts()
 
         return root
+    }
+
+    private fun toggleMyPosts() {
+        showMyPostsOnly = !showMyPostsOnly
+        updateMyPostsButtonAppearance()
+        fetchPosts()
+    }
+
+    private fun updateMyPostsButtonAppearance() {
+        if (showMyPostsOnly) {
+            myPostsButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
+            myPostsButton.setTextColor(android.graphics.Color.WHITE)
+        } else {
+            myPostsButton.setBackgroundResource(R.drawable.edit_text_background)
+            myPostsButton.backgroundTintList = null
+            myPostsButton.setTextColor(android.graphics.Color.BLACK)
+        }
     }
 
     private fun showFilterDialog() {
@@ -108,6 +138,8 @@ class DashboardFragment : Fragment() {
             currentSubject = null
             currentCourseCode = null
             currentHelpType = null
+            showMyPostsOnly = false
+            updateMyPostsButtonAppearance()
             fetchPosts()
             alertDialog.dismiss()
         }
@@ -116,6 +148,19 @@ class DashboardFragment : Fragment() {
     private fun fetchPosts() {
         var query: Query = db.collection("posts")
         val filterCount = listOf(currentSubject, currentCourseCode, currentHelpType).count { !it.isNullOrEmpty() }
+
+        // Add filter for current user's posts if "My Posts" is active
+        if (showMyPostsOnly) {
+            val currentUserId = auth.currentUser?.uid
+            if (currentUserId != null) {
+                query = query.whereEqualTo("posterId", currentUserId)
+            } else {
+                Toast.makeText(context, "Please log in to view your posts", Toast.LENGTH_SHORT).show()
+                showMyPostsOnly = false
+                updateMyPostsButtonAppearance()
+                return
+            }
+        }
 
         if (!currentSubject.isNullOrEmpty()) {
             query = query.whereEqualTo("courseName", currentSubject!!.uppercase())
@@ -129,7 +174,8 @@ class DashboardFragment : Fragment() {
             query = query.whereEqualTo("role", currentHelpType)
         }
 
-        if (filterCount != 1) {
+        val totalFilterCount = filterCount + if (showMyPostsOnly) 1 else 0
+        if (totalFilterCount != 1) {
             query = query.orderBy("timeStamp", Query.Direction.DESCENDING)
         }
 
@@ -139,17 +185,25 @@ class DashboardFragment : Fragment() {
                     postsList.clear()
                     val fetchedPosts = result.toObjects(Post::class.java)
 
-                    if (filterCount == 1) {
+                    if (totalFilterCount == 1) {
                         postsList.addAll(fetchedPosts.sortedByDescending { it.timeStamp })
                     } else {
                         postsList.addAll(fetchedPosts)
                     }
                     
                     postAdapter.notifyDataSetChanged()
+                    
+                    if (showMyPostsOnly && postsList.isEmpty()) {
+                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     postsList.clear()
                     postAdapter.notifyDataSetChanged()
-                    Toast.makeText(context, "No posts found.", Toast.LENGTH_SHORT).show()
+                    if (showMyPostsOnly) {
+                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "No posts found.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
             .addOnFailureListener { exception ->
