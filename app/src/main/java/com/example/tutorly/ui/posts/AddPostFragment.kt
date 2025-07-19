@@ -34,10 +34,6 @@ class AddPostFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (auth.currentUser == null) {
-            auth.createUserWithEmailAndPassword("admin@tutorly.com", "password")
-        }
-
         val postButton = view.findViewById<Button>(R.id.post_button)
         val titleInput = view.findViewById<EditText>(R.id.title_input)
         val subjectInput = view.findViewById<EditText>(R.id.subject_input)
@@ -105,7 +101,7 @@ class AddPostFragment : Fragment() {
                 "role" to role,
                 "posterId" to posterId,
                 "matchedId" to "",
-                "status" to "active",
+                "status" to Post.STATUS_ACTIVE,
                 "timeStamp" to FieldValue.serverTimestamp()
             )
 

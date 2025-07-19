@@ -9,6 +9,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.ui.posts.Post
+import com.google.firebase.auth.FirebaseAuth
 
 class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -26,6 +27,8 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        
         holder.postTitle.text = post.title
 
         if (post.posterId.isNotBlank()) {
@@ -35,7 +38,15 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
         }
 
         holder.courseInfo.text = "${post.courseName.uppercase()} ${post.courseCode}"
-        holder.roleInfo.text = post.role.replaceFirstChar { it.uppercase() }
+        
+        // Show "CLOSED" badge if post is closed and user is the owner
+        if (post.status == Post.STATUS_CLOSED && currentUserId == post.posterId) {
+            holder.roleInfo.text = "CLOSED"
+            holder.roleInfo.setBackgroundColor(android.graphics.Color.parseColor("#FF0000"))
+        } else {
+            holder.roleInfo.text = post.role.replaceFirstChar { it.uppercase() }
+            holder.roleInfo.setBackgroundColor(android.graphics.Color.parseColor("#005A9C"))
+        }
 
         holder.itemView.setOnClickListener {
             val bundle = bundleOf("postId" to post.id)
