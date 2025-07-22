@@ -12,12 +12,12 @@
         android:title="@string/title_forum" />
 
     <item
-        android:id="@+id/chat"
-        android:icon="@drawable/forum_24px"
-        android:title="@string/title_chat" />
+        android:id="@+id/notifications"
+        android:icon="@drawable/notifications_24px"
+        android:title="@string/title_notifications" />
 
     <item
-        android:id="@+id/Settings"
+        android:id="@+id/settings"
         android:icon="@drawable/settings_24px"
-        android:title="@string/title_setting" />
+        android:title="@string/title_settings" />
 </menu>
