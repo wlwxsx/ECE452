@@ -175,6 +175,12 @@
                 android:enabled="false"
                 app:layout_constraintTop_toBottomOf="@id/comment_input" />
 
+            <FrameLayout
+                android:id="@+id/fragment_container_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </RelativeLayout> 

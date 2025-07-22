@@ -50,6 +50,7 @@ class UserRepository {
                 val user = User(
                     userid = userData?.get("userid") as? String ?: "",
                     name = userData?.get("name") as? String ?: "",
+                    pronouns = userData?.get("pronouns") as? String ?: "",
                     program = userData?.get("program") as? String ?: "",
                     year = userData?.get("year") as? String ?: "",
                     email = userData?.get("email") as? String ?: "",
