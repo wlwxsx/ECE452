@@ -25,9 +25,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/chat"
+        android:id="@+id/notifications"
         android:name="com.example.tutorly.ui.notifications.NotificationsFragment"
-        android:label="@string/title_chat"
+        android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/addPostFragment"
@@ -45,9 +45,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/Settings"
+        android:id="@+id/settings"
         android:name="com.example.tutorly.ui.notifications.NotificationsFragment"
-        android:label="@string/title_setting"
+        android:label="@string/title_settings"
         tools:layout="@layout/fragment_setting" />
 
 </navigation>
