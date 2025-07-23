@@ -66,6 +66,18 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/password_requirements"
+        android:layout_width="393dp"
+        android:layout_height="wrap_content"
+        android:text="Password must be at least 8 characters with:\n• Uppercase and lowercase letters\n• Numbers\n• Symbols (!@#$%^&amp;*()_+-=)"
+        android:textSize="12sp"
+        android:textColor="#666666"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="8dp"
+        android:lineSpacingExtra="2dp"/>
+
     <Button
         android:id="@+id/btn_register"
         android:layout_width="wrap_content"

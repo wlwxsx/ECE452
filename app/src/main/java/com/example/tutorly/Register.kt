@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import com.example.tutorly.utils.PasswordValidator
 
 class Register : AppCompatActivity() {
     
@@ -140,6 +141,10 @@ class Register : AppCompatActivity() {
         
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, "Enter password", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        
+        if (!PasswordValidator.isPasswordValid(password, this)) {
             return false
         }
         

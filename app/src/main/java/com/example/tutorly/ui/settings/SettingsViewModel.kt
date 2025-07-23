@@ -1,13 +1,13 @@
-package com.example.tutorly.ui.notifications
+package com.example.tutorly.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class SettingsViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = ""
+        value = "Settings"
     }
     val text: LiveData<String> = _text
 }
