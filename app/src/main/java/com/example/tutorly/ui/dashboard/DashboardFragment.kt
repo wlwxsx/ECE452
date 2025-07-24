@@ -184,11 +184,28 @@ class DashboardFragment : Fragment() {
                 if (!result.isEmpty) {
                     postsList.clear()
                     val fetchedPosts = result.toObjects(Post::class.java)
+                    val currentUserId = auth.currentUser?.uid
+
+                    // Filter posts based on visibility rules
+                    val filteredPosts = fetchedPosts.filter { post ->
+                        when (post.status) {
+                            Post.STATUS_ACTIVE -> true // Open posts are visible to everyone
+                            Post.STATUS_MATCHED -> {
+                                // Matched posts are only visible to poster and matched user
+                                currentUserId == post.posterId || currentUserId == post.matchedId
+                            }
+                            Post.STATUS_CLOSED -> {
+                                // Closed posts are only visible to poster
+                                currentUserId == post.posterId
+                            }
+                            else -> true // Default to visible for any other status
+                        }
+                    }
 
                     if (totalFilterCount == 1) {
-                        postsList.addAll(fetchedPosts.sortedByDescending { it.timeStamp })
+                        postsList.addAll(filteredPosts.sortedByDescending { it.timeStamp })
                     } else {
-                        postsList.addAll(fetchedPosts)
+                        postsList.addAll(filteredPosts)
                     }
                     
                     postAdapter.notifyDataSetChanged()

@@ -13,8 +13,14 @@ data class Post(
     val message: String = "",
     val posterId: String = "",
     val role: String = "",
-    val status: String = "",
+    val status: String = "active", // Default status
     @ServerTimestamp
     val timeStamp: Date? = null,
     val title: String = ""
-) 
+) {
+    companion object {
+        const val STATUS_ACTIVE = "active"
+        const val STATUS_MATCHED = "matched"
+        const val STATUS_CLOSED = "closed"
+    }
+} 

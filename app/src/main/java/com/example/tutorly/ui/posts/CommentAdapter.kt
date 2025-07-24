@@ -3,6 +3,7 @@ package com.example.tutorly.ui.posts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
@@ -18,13 +19,18 @@ import java.util.Locale
 
 class CommentAdapter(
     private val comments: List<Map<String, Any>>,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val currentUserId: String?,
+    private val postOwnerId: String?,
+    private val postStatus: String?,
+    private val onMatchClick: (String) -> Unit
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val commentAuthor: TextView = itemView.findViewById(R.id.comment_author)
         val commentTimestamp: TextView = itemView.findViewById(R.id.comment_timestamp)
         val commentContent: TextView = itemView.findViewById(R.id.comment_content)
+        val matchButton: Button = itemView.findViewById(R.id.match_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -48,6 +54,20 @@ class CommentAdapter(
             holder.commentTimestamp.text = formatRelativeTime(timestamp.toDate())
         } ?: run {
             holder.commentTimestamp.text = "Just now"
+        }
+
+        // Show match button only if current user is the post owner, this isn't their own comment, and post is still open
+        val isPostOwner = currentUserId == postOwnerId
+        val isOwnComment = currentUserId == userId
+        val isPostOpen = postStatus == Post.STATUS_ACTIVE || postStatus.isNullOrBlank()
+        
+        if (isPostOwner && !isOwnComment && userId.isNotBlank() && isPostOpen) {
+            holder.matchButton.visibility = View.VISIBLE
+            holder.matchButton.setOnClickListener {
+                onMatchClick(userId)
+            }
+        } else {
+            holder.matchButton.visibility = View.GONE
         }
 
         // Fetch and display user name
