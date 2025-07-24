@@ -1,9 +1,9 @@
 package com.example.tutorly
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
+import android.util.Log
 
 class UserRepository {
     
@@ -90,7 +90,10 @@ class UserRepository {
                     isAdmin = userData["isAdmin"] as? Boolean ?: false,
                     likes = (userData["likes"] as? Long)?.toInt() ?: 0,
                     password = "", // Never retrieve password
-                    tutoredCourses = userData["tutoredCourses"] as? List<String> ?: emptyList()
+                    tutoredCourses = userData["tutoredCourses"] as? List<String> ?: emptyList(),
+					profileColor = userData?.get("profileColor") as? String 
+                        ?: userData?.get("avatarColor") as? String 
+                        ?: "#4CAF50"
                 )
                 
                 Log.d(TAG, "User object created: name='${user.name}', userid='${user.userid}'")
@@ -101,11 +104,20 @@ class UserRepository {
                 Log.d(TAG, "User retrieved successfully: $userId")
                 Result.success(user)
             } else {
-                Log.d(TAG, "User not found: $userId")
                 Result.success(null)
             }
         } catch (e: Exception) {
-            FirebaseUtils.logFirebaseException(TAG, "Error retrieving user: $userId", e)
+            Result.failure(e)
+        }
+    }
+    
+    //update user profile color
+    suspend fun updateUserProfileColor(userId: String, profileColor: String): Result<Unit> {
+        return try {
+            db.collection("users").document(userId)
+                .update("profileColor", profileColor)
+            Result.success(Unit)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }

@@ -1,5 +1,6 @@
 package com.example.tutorly.ui.posts
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -35,6 +36,8 @@ class PostDetailFragment : Fragment() {
     private var currentPost: Post? = null
     private lateinit var commentInput: EditText
     private lateinit var postCommentButton: Button
+    private lateinit var deletePostButton: Button
+    private lateinit var reportUserButton: Button
     private lateinit var commentsRecyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
     private lateinit var commentsLabel: TextView
@@ -67,13 +70,87 @@ class PostDetailFragment : Fragment() {
 
         commentInput = view.findViewById(R.id.comment_input)
         postCommentButton = view.findViewById(R.id.post_comment_button)
+        deletePostButton = view.findViewById(R.id.delete_post_button)
+        reportUserButton = view.findViewById(R.id.report_user_button)
         commentsRecyclerView = view.findViewById(R.id.comments_recycler_view)
         commentsLabel = view.findViewById(R.id.comments_label)
 
         setupCommentsRecyclerView()
         setupCommentInput()
         setupPostCommentButton()
+        setupDeletePostButton()
         fetchPostDetails()
+    }
+
+    private fun setupDeletePostButton() {
+        deletePostButton.setOnClickListener {
+            showDeletePostConfirmation()
+        }
+    }
+
+    private fun showDeletePostConfirmation() {
+        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_delete_confirmation, null)
+        
+        //Update the popup text for post deletion
+        val linearLayout = popupView as android.widget.LinearLayout
+        (linearLayout.getChildAt(0) as? TextView)?.text = "Delete Post"
+        (linearLayout.getChildAt(1) as? TextView)?.text = "I understand that this action cannot be undone and this post will be permanently deleted."
+        
+        val popup = AlertDialog.Builder(requireContext())
+            .setView(popupView)
+            .create()
+        
+        popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        
+        //button onclick listeners
+        popupView.findViewById<Button>(R.id.btn_cancel).setOnClickListener {
+            popup.dismiss()
+        }
+        
+        popupView.findViewById<Button>(R.id.btn_delete).setOnClickListener {
+            popup.dismiss()
+            deletePost()
+        }
+        
+        popup.show()
+    }
+
+    private fun deletePost() {
+        val postId = postId ?: return
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        if (currentPost?.posterId != currentUserId) return
+
+        db.collection("comments")
+            .whereEqualTo("postId", postId)
+            .get()
+            .addOnSuccessListener { commentSnapshots ->
+                val batch = db.batch()
+                
+                //add all comments to the batch for deletion
+                for (document in commentSnapshots.documents) {
+                    batch.delete(document.reference)
+                }
+                
+                batch.commit()
+                    .addOnSuccessListener {
+                        db.collection("posts").document(postId)
+                            .delete()
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
+                                findNavController().navigateUp()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(context, "Failed to delete comments", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun setupCommentInput() {
@@ -205,7 +282,7 @@ class PostDetailFragment : Fragment() {
         // Create comment data with proper server timestamp
         val commentData = hashMapOf(
             "content" to content,
-            "postId" to postId!!,
+            "postId" to postId,
             "userId" to userId,
             "timeStamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
         )
@@ -246,12 +323,25 @@ class PostDetailFragment : Fragment() {
                 if (document != null && document.exists()) {
                     val post = document.toObject(Post::class.java)
                     currentPost = post
+                    
+                    // check if current user posted this post
+                    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+                    if (currentUserId != null && post?.posterId == currentUserId) {
+                        //user posted this post, show delete button, hide report button
+                        deletePostButton.visibility = View.VISIBLE
+                        reportUserButton.visibility = View.GONE
+                    } else {
+                        //user didn't post this post, hide delete button, show report button
+                        deletePostButton.visibility = View.GONE
+                        reportUserButton.visibility = View.VISIBLE
+                    }
+                    
                     view?.let { view ->
                         view.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
                         view.findViewById<TextView>(R.id.post_title).text = post?.title
                         view.findViewById<TextView>(R.id.post_message).text = post?.message
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
-                        view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${sdf.format(post?.timeStamp)}"
+                        view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${post?.timeStamp?.let { sdf.format(it) } ?: "Unknown"}"
                         
                         // Show closed badge if post is closed
                         val closedBadge = view.findViewById<TextView>(R.id.closed_badge)

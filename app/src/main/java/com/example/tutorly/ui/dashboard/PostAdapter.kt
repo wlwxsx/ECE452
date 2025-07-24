@@ -57,13 +57,13 @@ class PostAdapter(private val posts: List<Post>) : RecyclerView.Adapter<PostAdap
 
         // Show badges based on post status
         if (post.status == Post.STATUS_CLOSED && currentUserId == post.posterId) {
-            holder.roleInfo.text = "CLOSED"
+            holder.roleInfo.text = "Closed"
             holder.roleInfo.setBackgroundColor(android.graphics.Color.parseColor("#FF0000"))
         } else if (post.status == Post.STATUS_MATCHED) {
-            holder.roleInfo.text = "MATCHED"
+            holder.roleInfo.text = "Matched"
             holder.roleInfo.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Green
         } else {
-            holder.roleInfo.text = post.role.replaceFirstChar { it.uppercase() }
+            holder.roleInfo.text = post.role.replaceFirstChar { it.uppercase() }.lowercase().replaceFirstChar { it.uppercase() }
             holder.roleInfo.setBackgroundColor(android.graphics.Color.parseColor("#005A9C"))
         }
 
