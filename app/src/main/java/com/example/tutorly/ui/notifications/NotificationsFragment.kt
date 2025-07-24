@@ -77,12 +77,12 @@ class NotificationsFragment : Fragment() {
                         val userResult = withContext(Dispatchers.IO) { userRepository.getUserById(otherUserId) }
                         val user = userResult.getOrNull() ?: return@mapNotNull null
                         val courseDisplay = (post.courseName + " " + post.courseCode).trim()
-                        MatchEntry(user.name, user.email, courseDisplay)
+                        MatchEntry(user.name, user.email, courseDisplay, post.id)
                     }
                     matchList.clear()
                     matchList.addAll(entries)
                     matchAdapter.notifyDataSetChanged()
-                    binding.textNotifications.text = if (entries.isEmpty()) "No matches yet..." else "MY MATCHES"
+                    binding.textNotifications.text = if (entries.isEmpty()) "No matches yet." else "MY MATCHES"
                 }
             }
             .addOnFailureListener {
@@ -98,7 +98,7 @@ class NotificationsFragment : Fragment() {
 }
 
 // Data class for match entry
-private data class MatchEntry(val name: String, val email: String, val courseCode: String)
+private data class MatchEntry(val name: String, val email: String, val course: String, val postId: String)
 
 // Adapter for displaying matches
 private class MatchAdapter(private val matches: List<MatchEntry>) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
@@ -115,7 +115,12 @@ private class MatchAdapter(private val matches: List<MatchEntry>) : RecyclerView
         val match = matches[position]
         holder.name.text = match.name
         holder.email.text = match.email
-        holder.courseCode.text = match.courseCode
+        holder.courseCode.text = match.course
+        holder.itemView.setOnClickListener {
+            val navController = androidx.navigation.Navigation.findNavController(holder.itemView)
+            val bundle = androidx.core.os.bundleOf("postId" to match.postId)
+            navController.navigate(com.example.tutorly.R.id.postDetailFragment, bundle)
+        }
     }
     override fun getItemCount() = matches.size
 }
