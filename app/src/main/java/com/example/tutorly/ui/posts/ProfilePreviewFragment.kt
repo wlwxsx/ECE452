@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.graphics.Color
 
 class ProfilePreviewFragment : DialogFragment() {
     private lateinit var userRepository: UserRepository
@@ -27,7 +28,7 @@ class ProfilePreviewFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val userId = arguments?.getString("userId") ?: return
-        val profileImage = view.findViewById<ImageView>(R.id.profile_image)
+        val profileInitial = view.findViewById<TextView>(R.id.text_profile_profile)
         val profileName = view.findViewById<TextView>(R.id.profile_name)
         val profilePronouns = view.findViewById<TextView>(R.id.profile_pronouns)
         val profileLikes = view.findViewById<TextView>(R.id.profile_likes)
@@ -37,11 +38,18 @@ class ProfilePreviewFragment : DialogFragment() {
                 .onSuccess { user ->
                     withContext(Dispatchers.Main) {
                         if (user != null) {
-                            profileName.text = user.name
-                            profilePronouns.text = user.pronouns
+                            if (user.name.isNotEmpty()) profileName.text = user.name
+                            if (user.pronouns.isNotEmpty()) profilePronouns.text = user.pronouns
                             profileLikes.text = "Likes: ${user.likes}"
-                            profileBio.text = user.bio
-                            profileImage.setImageResource(R.drawable.account_box_24px)
+                            if (user.bio.isNotEmpty()) profileBio.text = user.bio
+                            val firstInitial = if (user.name.isNotEmpty()) {
+                                user.name.first().uppercase()
+                            } else {
+                                "?"
+                            }
+                            profileInitial.text = firstInitial
+                            profileInitial.setBackgroundColor(Color.parseColor(user.profileColor))
+
                         } else {
                             profileName.text = "User not found"
                         }
