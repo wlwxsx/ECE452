@@ -180,12 +180,85 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setupCommentsRecyclerView() {
-        commentAdapter = CommentAdapter(commentsList, userRepository)
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        commentAdapter = CommentAdapter(
+            commentsList, 
+            userRepository, 
+            currentUserId, 
+            currentPost?.posterId,
+            currentPost?.status,
+            ::onMatchButtonClick
+        )
         commentsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = commentAdapter
             setHasFixedSize(false)
         }
+    }
+
+    private fun onMatchButtonClick(matchedUserId: String) {
+        if (postId == null) {
+            Toast.makeText(context, "Error: Post ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != currentPost?.posterId) {
+            Toast.makeText(context, "Only the post owner can match with users", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Update the post's matchedId field and status to matched in Firestore
+        val updates = hashMapOf<String, Any>(
+            "matchedId" to matchedUserId,
+            "status" to Post.STATUS_MATCHED
+        )
+        
+        db.collection("posts").document(postId!!)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Successfully matched with user!", Toast.LENGTH_SHORT).show()
+                // Update local post object
+                currentPost = currentPost?.copy(matchedId = matchedUserId, status = Post.STATUS_MATCHED)
+                // Refresh comments to hide match buttons since post is now matched
+                commentAdapter.notifyDataSetChanged()
+                // Refresh the post to show updated UI
+                fetchPostDetails()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "Error matching with user: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    private fun closePost() {
+        if (postId == null) {
+            Toast.makeText(context, "Error: Post ID not found", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != currentPost?.posterId) {
+            Toast.makeText(context, "Only the post owner can close the post", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Update the post status to closed in Firestore
+        val updates = hashMapOf<String, Any>(
+            "status" to Post.STATUS_CLOSED
+        )
+        
+        db.collection("posts").document(postId!!)
+            .update(updates)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Post closed successfully!", Toast.LENGTH_SHORT).show()
+                // Update local post object
+                currentPost = currentPost?.copy(status = Post.STATUS_CLOSED)
+                // Refresh the post to show updated UI
+                fetchPostDetails()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "Error closing post: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
     }
 
     private fun postComment() {
@@ -270,8 +343,49 @@ class PostDetailFragment : Fragment() {
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
                         view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${post?.timeStamp?.let { sdf.format(it) } ?: "Unknown"}"
                         
-                        // Fetch and display post author name
+                        // Show closed badge if post is closed
+                        val closedBadge = view.findViewById<TextView>(R.id.closed_badge)
+                        if (post?.status == Post.STATUS_CLOSED) {
+                            closedBadge.visibility = View.VISIBLE
+                        } else {
+                            closedBadge.visibility = View.GONE
+                        }
+                        
+                        // Handle report user button and close post button visibility
+                        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+                        val isPostOwner = currentUserId == post?.posterId
+                        val reportUserButton = view.findViewById<Button>(R.id.report_user_button)
+                        val closePostButton = view.findViewById<Button>(R.id.close_post_button)
                         val authorInfoTextView = view.findViewById<TextView>(R.id.author_info)
+
+                        // Show close post button only if user is post owner and post is matched
+                        if (isPostOwner && post?.status == Post.STATUS_MATCHED) {
+                            closePostButton.visibility = View.VISIBLE
+                            closePostButton.setOnClickListener {
+                                closePost()
+                            }
+                        } else {
+                            closePostButton.visibility = View.GONE
+                        }
+
+                        if (isPostOwner) {
+                            reportUserButton.visibility = View.GONE
+                            // Expand author info to full width when report button is hidden
+                            val params = authorInfoTextView.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+                            params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+                            params.marginEnd = 0
+                            authorInfoTextView.layoutParams = params
+                        } else {
+                            reportUserButton.visibility = View.VISIBLE
+                            // Constrain author info to leave space for report button
+                            val params = authorInfoTextView.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+                            params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
+                            params.endToStart = R.id.report_user_button
+                            params.marginEnd = 20
+                            authorInfoTextView.layoutParams = params
+                        }
+                        
+                        // Fetch and display post author name
                         if (post?.posterId?.isNotBlank() == true) {
                             authorInfoTextView.text = "Posted by: Loading..."
                             
@@ -286,7 +400,7 @@ class PostDetailFragment : Fragment() {
                                             }
                                         }
                                     }
-                                    .onFailure {
+                                    .onFailure { exception ->
                                         withContext(Dispatchers.Main) {
                                             authorInfoTextView.text = "Posted by: User_${post.posterId.take(6)}"
                                         }
@@ -296,6 +410,9 @@ class PostDetailFragment : Fragment() {
                             authorInfoTextView.text = "Posted by: Anonymous"
                         }
                     }
+                    
+                    // Update adapter with post owner information after post is loaded
+                    setupCommentsRecyclerView()
                     fetchComments() // Fetch comments after post details are loaded
                 } else {
                     Toast.makeText(context, "Post not found.", Toast.LENGTH_SHORT).show()

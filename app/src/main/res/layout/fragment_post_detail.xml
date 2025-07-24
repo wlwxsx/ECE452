@@ -38,10 +38,25 @@
                 android:textColor="#FFFFFF"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/closed_badge"
+                app:layout_constraintStart_toEndOf="@+id/back_button"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="POST #12" />
+
+            <TextView
+                android:id="@+id/closed_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#FF0000"
+                android:padding="8dp"
+                android:text="CLOSED"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/post_title"
@@ -132,6 +147,21 @@
                 app:layout_constraintTop_toBottomOf="@id/post_message"
                 tools:text="Posted 06/01/2025 - 2:58PM" />
 
+            <Button
+                android:id="@+id/close_post_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#FF0000"
+                android:text="CLOSE POST"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/post_message" />
+
             <TextView
                 android:id="@+id/comments_label"
                 android:layout_width="wrap_content"
@@ -142,6 +172,8 @@
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/post_timestamp" />
+
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comments_recycler_view"
