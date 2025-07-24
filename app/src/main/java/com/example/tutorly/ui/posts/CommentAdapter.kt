@@ -33,6 +33,7 @@ class CommentAdapter(
         val commentAuthor: TextView = itemView.findViewById(R.id.comment_author)
         val commentTimestamp: TextView = itemView.findViewById(R.id.comment_timestamp)
         val commentContent: TextView = itemView.findViewById(R.id.comment_content)
+        val matchButton: Button = itemView.findViewById(R.id.match_button)
 
         fun profilePreview(comment: Comment) {
             commentAuthor.setOnClickListener {
