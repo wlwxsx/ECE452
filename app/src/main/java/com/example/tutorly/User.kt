@@ -3,9 +3,7 @@ package com.example.tutorly
 data class Availability(
     val day: String = "",
     val time: String = ""
-) {
-    constructor() : this("", "")
-}
+)
 
 //password is not stored in firebase
 data class User(
@@ -20,10 +18,9 @@ data class User(
     val isAdmin: Boolean = false,
     val likes: Int = 0,
     val password: String = "",
-    val tutoredCourses: List<String> = emptyList()
+    val tutoredCourses: List<String> = emptyList(),
+    val profileColor: String = "#4CAF50" // DEFAULT_COLOR
 ) {
-    constructor() : this("", "", "", "", "", "", "", Availability(), false, 0, "", emptyList())
-    
     // create User without password for Firestore storage
     fun toFirestoreMap(): Map<String, Any> {
         return mapOf(
@@ -40,7 +37,8 @@ data class User(
             ),
             "isAdmin" to isAdmin,
             "likes" to likes,
-            "tutoredCourses" to tutoredCourses
+            "tutoredCourses" to tutoredCourses,
+            "profileColor" to profileColor
         )
     }
 } 

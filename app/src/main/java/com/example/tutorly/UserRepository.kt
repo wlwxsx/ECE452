@@ -1,13 +1,11 @@
 package com.example.tutorly
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class UserRepository {
     
     companion object {
-        private const val TAG = "UserRepository"
         private const val USERS_COLLECTION = "users"
         
         @Volatile
@@ -29,10 +27,8 @@ class UserRepository {
                 .document(user.userid)
                 .set(user.toFirestoreMap())
                 .await()
-            Log.d(TAG, "User saved successfully: ${user.userid}")
             Result.success(Unit)
         } catch (e: Exception) {
-            Log.e(TAG, "Error saving user: ${user.userid}", e)
             Result.failure(e)
         }
     }
@@ -55,20 +51,31 @@ class UserRepository {
                     email = userData?.get("email") as? String ?: "",
                     contact = userData?.get("contact") as? String ?: "",
                     bio = userData?.get("bio") as? String ?: "",
-                    availability = Availability(), // Default for now
+                    availability = Availability(),
                     isAdmin = userData?.get("isAdmin") as? Boolean ?: false,
                     likes = (userData?.get("likes") as? Long)?.toInt() ?: 0,
-                    password = "", // Never retrieve password
-                    tutoredCourses = userData?.get("tutoredCourses") as? List<String> ?: emptyList()
+                    password = "",
+                    tutoredCourses = userData?.get("tutoredCourses") as? List<String> ?: emptyList(),
+                    profileColor = userData?.get("profileColor") as? String 
+                        ?: userData?.get("avatarColor") as? String 
+                        ?: "#4CAF50"
                 )
-                Log.d(TAG, "User retrieved successfully: $userId")
                 Result.success(user)
             } else {
-                Log.d(TAG, "User not found: $userId")
                 Result.success(null)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error retrieving user: $userId", e)
+            Result.failure(e)
+        }
+    }
+    
+    //update user profile color
+    suspend fun updateUserProfileColor(userId: String, profileColor: String): Result<Unit> {
+        return try {
+            db.collection("users").document(userId)
+                .update("profileColor", profileColor)
+            Result.success(Unit)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
