@@ -76,19 +76,11 @@
             android:text="CHANGE PASSWORD"
             android:textColor="#FFFFFF" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="DELETE ACCOUNT"
-            android:textColor="#FF5722"
-            android:textSize="16sp" />
-
         <Button
             android:id="@+id/btn_delete_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#FF5722"
+            android:backgroundTint="#FF0000"
             android:text="DELETE ACCOUNT"
             android:textColor="#FFFFFF" />
 
