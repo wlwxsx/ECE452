@@ -9,6 +9,7 @@ data class Availability(
 data class User(
     val userid: String = "",
     val name: String = "",
+    val pronouns: String = "",
     val program: String = "",
     val year: String = "",
     val email: String = "",
@@ -21,11 +22,14 @@ data class User(
     val tutoredCourses: List<String> = emptyList(),
     val profileColor: String = "#4CAF50" // DEFAULT_COLOR
 ) {
+    constructor() : this("", "", "", "", "", "", "", "", Availability(), false, 0, "", emptyList())
+    
     // create User without password for Firestore storage
     fun toFirestoreMap(): Map<String, Any> {
         return mapOf(
             "userid" to userid,
             "name" to name,
+            "pronouns" to pronouns,
             "program" to program,
             "year" to year,
             "email" to email,

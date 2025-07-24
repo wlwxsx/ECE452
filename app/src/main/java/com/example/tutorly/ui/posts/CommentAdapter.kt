@@ -1,13 +1,16 @@
 package com.example.tutorly.ui.posts
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.UserRepository
+import com.example.tutorly.ui.profile.ProfilePreviewFragment
 import com.google.firebase.Timestamp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +33,18 @@ class CommentAdapter(
         val commentAuthor: TextView = itemView.findViewById(R.id.comment_author)
         val commentTimestamp: TextView = itemView.findViewById(R.id.comment_timestamp)
         val commentContent: TextView = itemView.findViewById(R.id.comment_content)
-        val matchButton: Button = itemView.findViewById(R.id.match_button)
+
+        fun profilePreview(comment: Comment) {
+            commentAuthor.setOnClickListener {
+                val fragmentManager = (itemView.context as AppCompatActivity).supportFragmentManager
+                val dialog = ProfilePreviewFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("userId", comment.id)
+                    }
+                }
+                dialog.show(fragmentManager, "profile_preview")
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -60,7 +74,7 @@ class CommentAdapter(
         val isPostOwner = currentUserId == postOwnerId
         val isOwnComment = currentUserId == userId
         val isPostOpen = postStatus == Post.STATUS_ACTIVE || postStatus.isNullOrBlank()
-        
+
         if (isPostOwner && !isOwnComment && userId.isNotBlank() && isPostOpen) {
             holder.matchButton.visibility = View.VISIBLE
             holder.matchButton.setOnClickListener {
@@ -96,6 +110,7 @@ class CommentAdapter(
         } else {
             holder.commentAuthor.text = "Anonymous"
         }
+        holder.profilePreview(Comment(userId))
     }
 
     override fun getItemCount() = comments.size

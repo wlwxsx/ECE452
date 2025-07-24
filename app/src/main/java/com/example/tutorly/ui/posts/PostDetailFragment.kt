@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.example.tutorly.ui.profile.ProfilePreviewFragment
 
 class PostDetailFragment : Fragment() {
 
@@ -388,7 +389,14 @@ class PostDetailFragment : Fragment() {
                         // Fetch and display post author name
                         if (post?.posterId?.isNotBlank() == true) {
                             authorInfoTextView.text = "Posted by: Loading..."
-                            
+                            authorInfoTextView.setOnClickListener {
+                                val dialog = ProfilePreviewFragment().apply {
+                                    arguments = Bundle().apply {
+                                        putString("userId", post.posterId)
+                                    }
+                                }
+                                dialog.show(parentFragmentManager, "profile_preview")
+                            }
                             CoroutineScope(Dispatchers.IO).launch {
                                 userRepository.getUserById(post.posterId)
                                     .onSuccess { user ->

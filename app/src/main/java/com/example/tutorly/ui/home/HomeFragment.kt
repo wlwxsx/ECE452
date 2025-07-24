@@ -23,12 +23,16 @@ import com.example.tutorly.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.SetOptions
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
     private lateinit var userRepository: UserRepository
 
     companion object {
@@ -47,6 +51,8 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         // get reference to UI elements
+        db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
         val nameTextView: TextView = binding.textProfileName
         val profileTextView: TextView = binding.textProfileProfile
         val editColorButton: ImageButton = binding.btnEditProfileColor
@@ -60,7 +66,7 @@ class HomeFragment : Fragment() {
         homeViewModel.user.observe(viewLifecycleOwner) { user ->
             if (user != null) {
                 nameTextView.text = user.name
-                
+
                 //profile is first initial in the profile circle
                 val firstInitial = if (user.name.isNotEmpty()) {
                     user.name.first().uppercase()
@@ -68,7 +74,7 @@ class HomeFragment : Fragment() {
                     "?"
                 }
                 profileTextView.text = firstInitial
-                
+
                 //Update profile color
                 updateProfileColor(profileTextView, user.profileColor)
             }
@@ -79,13 +85,57 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+        loadUserProfileData()
+        homeViewModel.name.observe(viewLifecycleOwner) { nameString -> binding.textProfileName.setText(nameString) }
         binding.logout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(requireContext(), Login::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+        binding.buttonSaveProfile.setOnClickListener { saveUserProfileUpdates() }
+    }
+
+    private fun loadUserProfileData() {
+        val currentUser: FirebaseUser? = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            db.collection("users").document(userId).get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        binding.textProfileName.setText(documentSnapshot.getString("name"))
+                        binding.textProfilePronouns.setText(documentSnapshot.getString("pronouns"))
+                        binding.textProfileBio.setText(documentSnapshot.getString("bio"))
+                    } else { Toast.makeText(context, "No profile created yet. Please save.", Toast.LENGTH_SHORT).show() }
+                }
+                .addOnFailureListener { e -> Toast.makeText(context, "Failed to load profile: ${e.message}", Toast.LENGTH_LONG).show() }
+        }
+    }
+
+    private fun saveUserProfileUpdates() {
+        val currentUser: FirebaseUser? = auth.currentUser
+        if (currentUser == null) {
+            Toast.makeText(context, "No user logged in. Cannot save.", Toast.LENGTH_LONG).show()
+            return
+        }
+        val userId = currentUser.uid
+        val name = binding.textProfileName.text.toString().trim()
+        val pronouns = binding.textProfilePronouns.text.toString().trim()
+        val bio = binding.textProfileBio.text.toString().trim()
+        if (name.isEmpty()) {
+            binding.textProfileName.error = "Name cannot be empty"
+            binding.textProfileName.requestFocus()
+            return
+        }
+        val userUpdates = hashMapOf<String, Any>(
+            "name" to name,
+            "pronouns" to pronouns,
+            "bio" to bio
+        )
+        db.collection("users").document(userId)
+            .set(userUpdates, SetOptions.merge())
+            .addOnSuccessListener { Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show() }
+            .addOnFailureListener { e -> Toast.makeText(context, "Error updating profile: ${e.message}", Toast.LENGTH_LONG).show() }
     }
 
     override fun onResume() {
@@ -95,13 +145,13 @@ class HomeFragment : Fragment() {
 
     private fun showColorPickerPopup() {
         val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_color_picker, null)
-        
+
         val popup = AlertDialog.Builder(requireContext())
             .setView(popupView)
             .create()
-        
+
         popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
+
         //button click listeners
         val colorMap = mapOf(
             R.id.color_red to "#F44336",
@@ -115,21 +165,21 @@ class HomeFragment : Fragment() {
             R.id.color_brown to "#795548",
             R.id.color_grey to "#607D8B"
         )
-        
+
         colorMap.forEach { (buttonId, colorHex) ->
             popupView.findViewById<Button>(buttonId).setOnClickListener {
                 saveProfileColor(colorHex)
                 popup.dismiss()
             }
         }
-        
+
         popupView.findViewById<Button>(R.id.btn_cancel_color).setOnClickListener {
             popup.dismiss()
         }
-        
+
         popup.show()
     }
-    
+
     private fun saveProfileColor(colorHex: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
         updateProfileColor(binding.textProfileProfile, colorHex)
@@ -144,7 +194,7 @@ class HomeFragment : Fragment() {
                 }
         }
     }
-    
+
     private fun updateProfileColor(profileTextView: TextView, colorHex: String) {
         val newDrawable = GradientDrawable().apply {
             shape = GradientDrawable.OVAL

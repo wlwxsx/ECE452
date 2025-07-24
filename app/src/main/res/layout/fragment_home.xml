@@ -10,16 +10,6 @@
     <!-- Top Bar -->
 
     <!-- My Posts Icon -->
-    <ImageButton
-        android:id="@+id/myPostsButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="20dp"
-        android:layout_marginTop="25dp"
-        android:contentDescription="My Posts icon Button"
-        android:src="@drawable/ic_posts_placeholder" />
-
 
 
     <!-- Main Profile Content Area -->
@@ -47,7 +37,7 @@
                 android:textSize="80sp"
                 android:textStyle="bold"
                 tools:text="J" />
-            
+
             <ImageButton
                 android:id="@+id/btn_edit_profile_color"
                 android:layout_width="40dp"
@@ -72,7 +62,7 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,7 +71,7 @@
             android:layout_marginBottom="16dp"
             android:textColor="#000000"
             android:textSize="16sp"
-            tools:text="John Smith" />
+            android:hint="John Smith" />
 
         <!-- Pronouns Field -->
         <TextView
@@ -91,7 +81,7 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_profile_pronouns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -100,7 +90,7 @@
             android:layout_marginBottom="16dp"
             android:textColor="#000000"
             android:textSize="16sp"
-            tools:text="He/Him" />
+            android:hint="He/Him" />
 
         <!-- About Field -->
         <TextView
@@ -110,7 +100,7 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_profile_bio"
             android:layout_width="match_parent"
             android:layout_height="102dp"
@@ -118,14 +108,22 @@
             android:padding="8dp"
             android:textColor="#000000"
             android:textSize="16sp"
-            tools:text="..." />
+            android:hint="..." />
+
+        <Button
+            android:id="@+id/button_save_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/button_gray"
+            android:text="Save Profile" />
 
         <Button
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:backgroundTint="@color/button_gray"
-			android:layout_marginTop= "20dp"
             android:text="Logout" />
 
     </LinearLayout>

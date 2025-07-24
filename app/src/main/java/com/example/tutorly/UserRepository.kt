@@ -1,9 +1,9 @@
 package com.example.tutorly
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import kotlinx.coroutines.tasks.await
-import android.util.Log
 
 class UserRepository {
     
@@ -25,7 +25,7 @@ class UserRepository {
     
     // Simple in-memory cache for user data
     private val userCache = mutableMapOf<String, User>()
-    
+
     //save user profile to Firestore
     suspend fun saveUser(user: User): Result<Unit> {
         return try {
@@ -33,10 +33,10 @@ class UserRepository {
                 .document(user.userid)
                 .set(user.toFirestoreMap())
                 .await()
-            
+
             // Update cache after successful save
             userCache[user.userid] = user
-            
+
             Log.d(TAG, "User saved successfully: ${user.userid}")
             Result.success(Unit)
         } catch (e: Exception) {
@@ -53,7 +53,7 @@ class UserRepository {
                 Log.d(TAG, "User retrieved from cache: $userId")
                 return Result.success(cachedUser)
             }
-            
+
             // Try cache first, then server
             val document = try {
                 db.collection(USERS_COLLECTION)
@@ -67,7 +67,7 @@ class UserRepository {
                     .get(Source.SERVER)
                     .await()
             }
-            
+
             val userData = if (document.exists()) {
                 document.data
             } else {
@@ -77,30 +77,31 @@ class UserRepository {
             if (userData != null) {
                 // Debug: Print the actual data structure
                 Log.d(TAG, "User data retrieved for $userId: $userData")
-                
+
                 val user = User(
-                    userid = userId,
-                    name = userData["name"] as? String ?: "",
-                    program = userData["program"] as? String ?: "",
-                    year = userData["year"] as? String ?: "",
-                    email = userData["email"] as? String ?: "",
-                    contact = userData["contact"] as? String ?: "",
-                    bio = userData["bio"] as? String ?: "",
+                    userid = userData?.get("userid") as? String ?: "",
+                    name = userData?.get("name") as? String ?: "",
+                    pronouns = userData?.get("pronouns") as? String ?: "",
+                    program = userData?.get("program") as? String ?: "",
+                    year = userData?.get("year") as? String ?: "",
+                    email = userData?.get("email") as? String ?: "",
+                    contact = userData?.get("contact") as? String ?: "",
+                    bio = userData?.get("bio") as? String ?: "",
                     availability = Availability(), // Default for now
                     isAdmin = userData["isAdmin"] as? Boolean ?: false,
                     likes = (userData["likes"] as? Long)?.toInt() ?: 0,
                     password = "", // Never retrieve password
                     tutoredCourses = userData["tutoredCourses"] as? List<String> ?: emptyList(),
-					profileColor = userData?.get("profileColor") as? String 
-                        ?: userData?.get("avatarColor") as? String 
+					profileColor = userData?.get("profileColor") as? String
+                        ?: userData?.get("avatarColor") as? String
                         ?: "#4CAF50"
                 )
-                
+
                 Log.d(TAG, "User object created: name='${user.name}', userid='${user.userid}'")
-                
+
                 // Cache the user
                 userCache[userId] = user
-                
+
                 Log.d(TAG, "User retrieved successfully: $userId")
                 Result.success(user)
             } else {
@@ -110,7 +111,7 @@ class UserRepository {
             Result.failure(e)
         }
     }
-    
+
     //update user profile color
     suspend fun updateUserProfileColor(userId: String, profileColor: String): Result<Unit> {
         return try {
@@ -121,10 +122,10 @@ class UserRepository {
             Result.failure(e)
         }
     }
-    
+
     // Clear cache if needed
     fun clearCache() {
         userCache.clear()
         Log.d(TAG, "User cache cleared")
     }
-} 
+}
