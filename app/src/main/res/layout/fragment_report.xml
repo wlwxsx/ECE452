@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#005A9C"
+    android:orientation="vertical"
+    android:padding="24dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="Report Account"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:text="Description of Report:"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/report_description"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#FFFFFF"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:hint="..." />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="By clicking 'Report', I understand that making a false report can lead to the removal of my account."
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#666666"
+            android:text="Cancel"
+            android:textColor="#FFFFFF" />
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FF5722"
+            android:text="Report"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+</LinearLayout>
