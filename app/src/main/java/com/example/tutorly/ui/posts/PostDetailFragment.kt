@@ -188,7 +188,8 @@ class PostDetailFragment : Fragment() {
             currentUserId, 
             currentPost?.posterId,
             currentPost?.status,
-            ::onMatchButtonClick
+            ::onMatchButtonClick,
+            parentFragmentManager
         )
         commentsRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
