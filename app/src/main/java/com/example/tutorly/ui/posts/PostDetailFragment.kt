@@ -38,7 +38,6 @@ class PostDetailFragment : Fragment() {
     private lateinit var commentInput: EditText
     private lateinit var postCommentButton: Button
     private lateinit var deletePostButton: Button
-    private lateinit var reportUserButton: Button
     private lateinit var commentsRecyclerView: RecyclerView
     private lateinit var commentAdapter: CommentAdapter
     private lateinit var commentsLabel: TextView
@@ -72,7 +71,6 @@ class PostDetailFragment : Fragment() {
         commentInput = view.findViewById(R.id.comment_input)
         postCommentButton = view.findViewById(R.id.post_comment_button)
         deletePostButton = view.findViewById(R.id.delete_post_button)
-        reportUserButton = view.findViewById(R.id.report_user_button)
         commentsRecyclerView = view.findViewById(R.id.comments_recycler_view)
         commentsLabel = view.findViewById(R.id.comments_label)
 
@@ -329,13 +327,8 @@ class PostDetailFragment : Fragment() {
                     // check if current user posted this post
                     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
                     if (currentUserId != null && post?.posterId == currentUserId) {
-                        //user posted this post, show delete button, hide report button
+                        //user posted this post, show delete button
                         deletePostButton.visibility = View.VISIBLE
-                        reportUserButton.visibility = View.GONE
-                    } else {
-                        //user didn't post this post, hide delete button, show report button
-                        deletePostButton.visibility = View.GONE
-                        reportUserButton.visibility = View.VISIBLE
                     }
                     
                     view?.let { view ->
@@ -356,7 +349,6 @@ class PostDetailFragment : Fragment() {
                         // Handle report user button and close post button visibility
                         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
                         val isPostOwner = currentUserId == post?.posterId
-                        val reportUserButton = view.findViewById<Button>(R.id.report_user_button)
                         val closePostButton = view.findViewById<Button>(R.id.close_post_button)
                         val authorInfoTextView = view.findViewById<TextView>(R.id.author_info)
 
@@ -371,14 +363,12 @@ class PostDetailFragment : Fragment() {
                         }
 
                         if (isPostOwner) {
-                            reportUserButton.visibility = View.GONE
                             // Expand author info to full width when report button is hidden
                             val params = authorInfoTextView.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
                             params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
                             params.marginEnd = 0
                             authorInfoTextView.layoutParams = params
                         } else {
-                            reportUserButton.visibility = View.VISIBLE
                             // Constrain author info to leave space for report button
                             val params = authorInfoTextView.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
                             params.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
