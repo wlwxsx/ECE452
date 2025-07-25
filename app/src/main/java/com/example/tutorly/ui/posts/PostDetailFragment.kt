@@ -393,6 +393,7 @@ class PostDetailFragment : Fragment() {
                                 val dialog = ProfilePreviewFragment().apply {
                                     arguments = Bundle().apply {
                                         putString("userId", post.posterId)
+                                        putString("reporterUserId", FirebaseAuth.getInstance().currentUser?.uid)
                                     }
                                 }
                                 dialog.show(parentFragmentManager, "profile_preview")
