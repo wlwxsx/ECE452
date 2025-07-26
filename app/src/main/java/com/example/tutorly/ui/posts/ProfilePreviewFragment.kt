@@ -39,11 +39,19 @@ class ProfilePreviewFragment : DialogFragment() {
         val profileInitial = view.findViewById<TextView>(R.id.text_profile_profile)
         val profileName = view.findViewById<TextView>(R.id.profile_name)
         val profilePronouns = view.findViewById<TextView>(R.id.profile_pronouns)
-        val profileLikes = view.findViewById<TextView>(R.id.profile_likes)
         val profileBio = view.findViewById<TextView>(R.id.profile_bio)
         val profileReport = view.findViewById<Button>(R.id.report_user_button)
+        val likeButton = view.findViewById<android.widget.ImageButton>(R.id.like_button)
+        val likeCount = view.findViewById<TextView>(R.id.like_count)
 
         profileReport.setOnClickListener { openReportDialog() }
+        likeButton.setOnClickListener {
+            if (userId != reporterUserId) {
+                handleLikeToggle(userId, reporterUserId, likeButton, likeCount)
+            } else {
+                Toast.makeText(context, "You cannot like yourself.", Toast.LENGTH_SHORT).show()
+            }
+        }
         CoroutineScope(Dispatchers.IO).launch {
             userRepository.getUserById(userId)
                 .onSuccess { user ->
@@ -51,13 +59,20 @@ class ProfilePreviewFragment : DialogFragment() {
                         if (user != null) {
                             if (user.name.isNotEmpty()) profileName.text = user.name
                             if (user.pronouns.isNotEmpty()) profilePronouns.text = user.pronouns
-                            profileLikes.text = "Likes: ${user.likes}"
                             if (user.bio.isNotEmpty()) profileBio.text = user.bio
                             val firstInitial = if (user.name.isNotEmpty()) user.name.first().uppercase()
                             else "?"
                             profileInitial.text = firstInitial
                             profileInitial.setBackgroundColor(Color.parseColor(user.profileColor))
-
+                            likeCount.text = user.likes.toString()
+                            // Set like button icon based on liked state
+                            if (reporterUserId != null && user.likedBy.contains(reporterUserId)) {
+                                likeButton.setImageResource(R.drawable.ic_like)
+                                likeButton.alpha = 1.0f
+                            } else {
+                                likeButton.setImageResource(R.drawable.ic_like_outline)
+                                likeButton.alpha = 1.0f
+                            }
                         } else {
                             profileName.text = "User not found"
                         }
@@ -121,6 +136,37 @@ class ProfilePreviewFragment : DialogFragment() {
                 popup.dismiss()
             }
             .addOnFailureListener { exception -> Toast.makeText(context, "Error submitting report: ${exception.message}", Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun handleLikeToggle(userId: String?, reporterUserId: String?, likeButton: android.widget.ImageButton, likeCount: TextView) {
+        if (userId == null || reporterUserId == null) return
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.toggleUserLike(userId, reporterUserId)
+                .onSuccess { liked ->
+                    withContext(Dispatchers.Main) {
+                        // Update the likes display and icon
+                        userRepository.getUserById(userId)
+                            .onSuccess { user ->
+                                user?.let {
+                                    likeCount.text = it.likes.toString()
+                                    if (liked) {
+                                        likeButton.setImageResource(R.drawable.ic_like)
+                                        Toast.makeText(context, "Liked!", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        likeButton.setImageResource(R.drawable.ic_like_outline)
+                                        Toast.makeText(context, "Unliked!", Toast.LENGTH_SHORT).show()
+                                    }
+                                    likeButton.alpha = 1.0f
+                                }
+                            }
+                    }
+                }
+                .onFailure { exception ->
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, exception.message ?: "Error toggling like", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 
 
