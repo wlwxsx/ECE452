@@ -123,6 +123,85 @@ class UserRepository {
         }
     }
 
+    //update user like count
+    suspend fun incrementUserLikes(userId: String, currentUserId: String): Result<Unit> {
+        return try {
+            // Get the user document
+            val userDocRef = db.collection("users").document(userId)
+            val snapshot = userDocRef.get().await()
+            val likedBy = (snapshot.get("likedBy") as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
+            if (likedBy.contains(currentUserId)) {
+                // Already liked
+                return Result.failure(Exception("You have already liked this user."))
+            }
+            // Atomically increment likes and add to likedBy
+            userDocRef.update(
+                mapOf(
+                    "likes" to com.google.firebase.firestore.FieldValue.increment(1),
+                    "likedBy" to com.google.firebase.firestore.FieldValue.arrayUnion(currentUserId)
+                )
+            ).await()
+            // Update cache if user is cached
+            userCache[userId]?.let { cachedUser ->
+                userCache[userId] = cachedUser.copy(
+                    likes = cachedUser.likes + 1,
+                    likedBy = cachedUser.likedBy + currentUserId
+                )
+            }
+            Log.d(TAG, "User likes incremented successfully: $userId by $currentUserId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            FirebaseUtils.logFirebaseException(TAG, "Error incrementing user likes: $userId", e)
+            Result.failure(e)
+        }
+    }
+
+    //toggle user like
+    suspend fun toggleUserLike(userId: String, currentUserId: String): Result<Boolean> {
+        return try {
+            val userDocRef = db.collection(USERS_COLLECTION).document(userId)
+            val snapshot = userDocRef.get().await()
+            val likedBy = (snapshot.get("likedBy") as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
+            val isLiked = likedBy.contains(currentUserId)
+            if (isLiked) {
+                // Unlike: decrement likes and remove from likedBy
+                userDocRef.update(
+                    mapOf(
+                        "likes" to com.google.firebase.firestore.FieldValue.increment(-1),
+                        "likedBy" to com.google.firebase.firestore.FieldValue.arrayRemove(currentUserId)
+                    )
+                ).await()
+                userCache[userId]?.let { cachedUser ->
+                    userCache[userId] = cachedUser.copy(
+                        likes = (cachedUser.likes - 1).coerceAtLeast(0),
+                        likedBy = cachedUser.likedBy - currentUserId
+                    )
+                }
+                Log.d(TAG, "User unliked successfully: $userId by $currentUserId")
+                Result.success(false)
+            } else {
+                // Like: increment likes and add to likedBy
+                userDocRef.update(
+                    mapOf(
+                        "likes" to com.google.firebase.firestore.FieldValue.increment(1),
+                        "likedBy" to com.google.firebase.firestore.FieldValue.arrayUnion(currentUserId)
+                    )
+                ).await()
+                userCache[userId]?.let { cachedUser ->
+                    userCache[userId] = cachedUser.copy(
+                        likes = cachedUser.likes + 1,
+                        likedBy = cachedUser.likedBy + currentUserId
+                    )
+                }
+                Log.d(TAG, "User liked successfully: $userId by $currentUserId")
+                Result.success(true)
+            }
+        } catch (e: Exception) {
+            FirebaseUtils.logFirebaseException(TAG, "Error toggling user like: $userId", e)
+            Result.failure(e)
+        }
+    }
+
     // Clear cache if needed
     fun clearCache() {
         userCache.clear()
