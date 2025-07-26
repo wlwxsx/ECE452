@@ -1,0 +1,4139 @@
+[
+  {
+    "course": "ACTSC 221"
+  },
+  {
+    "course": "ACTSC 231"
+  },
+  {
+    "course": "ACTSC 232"
+  },
+  {
+    "course": "ACTSC 331"
+  },
+  {
+    "course": "ACTSC 363"
+  },
+  {
+    "course": "ACTSC 372"
+  },
+  {
+    "course": "ACTSC 431"
+  },
+  {
+    "course": "ACTSC 445"
+  },
+  {
+    "course": "ACTSC 446"
+  },
+  {
+    "course": "ACTSC 489"
+  },
+  {
+    "course": "AE 100"
+  },
+  {
+    "course": "AE 101"
+  },
+  {
+    "course": "AE 104"
+  },
+  {
+    "course": "AE 115"
+  },
+  {
+    "course": "AE 205"
+  },
+  {
+    "course": "AE 223"
+  },
+  {
+    "course": "AE 225"
+  },
+  {
+    "course": "AE 265"
+  },
+  {
+    "course": "AE 299"
+  },
+  {
+    "course": "AE 572"
+  },
+  {
+    "course": "AFM 101"
+  },
+  {
+    "course": "AFM 102"
+  },
+  {
+    "course": "AFM 111"
+  },
+  {
+    "course": "AFM 112"
+  },
+  {
+    "course": "AFM 123"
+  },
+  {
+    "course": "AFM 127"
+  },
+  {
+    "course": "AFM 131"
+  },
+  {
+    "course": "AFM 132"
+  },
+  {
+    "course": "AFM 191"
+  },
+  {
+    "course": "AFM 205"
+  },
+  {
+    "course": "AFM 206"
+  },
+  {
+    "course": "AFM 207"
+  },
+  {
+    "course": "AFM 208"
+  },
+  {
+    "course": "AFM 212"
+  },
+  {
+    "course": "AFM 231"
+  },
+  {
+    "course": "AFM 272"
+  },
+  {
+    "course": "AFM 273"
+  },
+  {
+    "course": "AFM 274"
+  },
+  {
+    "course": "AFM 276"
+  },
+  {
+    "course": "AFM 291"
+  },
+  {
+    "course": "AFM 321"
+  },
+  {
+    "course": "AFM 322"
+  },
+  {
+    "course": "AFM 323"
+  },
+  {
+    "course": "AFM 326"
+  },
+  {
+    "course": "AFM 328"
+  },
+  {
+    "course": "AFM 329"
+  },
+  {
+    "course": "AFM 333"
+  },
+  {
+    "course": "AFM 335"
+  },
+  {
+    "course": "AFM 341"
+  },
+  {
+    "course": "AFM 346"
+  },
+  {
+    "course": "AFM 347"
+  },
+  {
+    "course": "AFM 373"
+  },
+  {
+    "course": "AFM 382"
+  },
+  {
+    "course": "AFM 415"
+  },
+  {
+    "course": "AFM 417"
+  },
+  {
+    "course": "AFM 425"
+  },
+  {
+    "course": "AFM 426"
+  },
+  {
+    "course": "AFM 428"
+  },
+  {
+    "course": "AFM 429"
+  },
+  {
+    "course": "AFM 433"
+  },
+  {
+    "course": "AFM 434"
+  },
+  {
+    "course": "AFM 445"
+  },
+  {
+    "course": "AFM 451"
+  },
+  {
+    "course": "AFM 462"
+  },
+  {
+    "course": "AFM 463"
+  },
+  {
+    "course": "AFM 470"
+  },
+  {
+    "course": "AFM 477"
+  },
+  {
+    "course": "AFM 478"
+  },
+  {
+    "course": "AFM 480"
+  },
+  {
+    "course": "AFM 482"
+  },
+  {
+    "course": "AFM 485"
+  },
+  {
+    "course": "AFM 491"
+  },
+  {
+    "course": "AMATH 231"
+  },
+  {
+    "course": "AMATH 250"
+  },
+  {
+    "course": "AMATH 251"
+  },
+  {
+    "course": "AMATH 271"
+  },
+  {
+    "course": "AMATH 331"
+  },
+  {
+    "course": "AMATH 333"
+  },
+  {
+    "course": "AMATH 342"
+  },
+  {
+    "course": "AMATH 343"
+  },
+  {
+    "course": "AMATH 345"
+  },
+  {
+    "course": "AMATH 350"
+  },
+  {
+    "course": "AMATH 351"
+  },
+  {
+    "course": "AMATH 390"
+  },
+  {
+    "course": "AMATH 391"
+  },
+  {
+    "course": "AMATH 442"
+  },
+  {
+    "course": "AMATH 449"
+  },
+  {
+    "course": "AMATH 453"
+  },
+  {
+    "course": "AMATH 456"
+  },
+  {
+    "course": "AMATH 463"
+  },
+  {
+    "course": "AMATH 473"
+  },
+  {
+    "course": "AMATH 477"
+  },
+  {
+    "course": "AMATH 499"
+  },
+  {
+    "course": "ANTH 100"
+  },
+  {
+    "course": "ANTH 201"
+  },
+  {
+    "course": "ANTH 204"
+  },
+  {
+    "course": "ANTH 222"
+  },
+  {
+    "course": "ANTH 245"
+  },
+  {
+    "course": "ANTH 251"
+  },
+  {
+    "course": "ANTH 272"
+  },
+  {
+    "course": "ANTH 309"
+  },
+  {
+    "course": "ANTH 355"
+  },
+  {
+    "course": "ANTH 382"
+  },
+  {
+    "course": "ARBUS 101"
+  },
+  {
+    "course": "ARBUS 200"
+  },
+  {
+    "course": "ARBUS 202"
+  },
+  {
+    "course": "ARBUS 300"
+  },
+  {
+    "course": "ARBUS 301"
+  },
+  {
+    "course": "ARBUS 302"
+  },
+  {
+    "course": "ARBUS 303"
+  },
+  {
+    "course": "ARBUS 400"
+  },
+  {
+    "course": "ARCH 110"
+  },
+  {
+    "course": "ARCH 120"
+  },
+  {
+    "course": "ARCH 142"
+  },
+  {
+    "course": "ARCH 172"
+  },
+  {
+    "course": "ARCH 192"
+  },
+  {
+    "course": "ARCH 212"
+  },
+  {
+    "course": "ARCH 246"
+  },
+  {
+    "course": "ARCH 260"
+  },
+  {
+    "course": "ARCH 292"
+  },
+  {
+    "course": "ARCH 393"
+  },
+  {
+    "course": "ARCH 428"
+  },
+  {
+    "course": "ARCH 442"
+  },
+  {
+    "course": "ARCH 446"
+  },
+  {
+    "course": "ARCH 449"
+  },
+  {
+    "course": "ARCH 485"
+  },
+  {
+    "course": "ARCH 492"
+  },
+  {
+    "course": "ARCH 510"
+  },
+  {
+    "course": "ARCH 520"
+  },
+  {
+    "course": "ARCH 540"
+  },
+  {
+    "course": "ARCH 570"
+  },
+  {
+    "course": "ARTS 160"
+  },
+  {
+    "course": "ARTS 280"
+  },
+  {
+    "course": "ARTS 290"
+  },
+  {
+    "course": "ARTS 450"
+  },
+  {
+    "course": "AVIA 100"
+  },
+  {
+    "course": "AVIA 102"
+  },
+  {
+    "course": "AVIA 203"
+  },
+  {
+    "course": "AVIA 205"
+  },
+  {
+    "course": "AVIA 222"
+  },
+  {
+    "course": "AVIA 243"
+  },
+  {
+    "course": "AVIA 306"
+  },
+  {
+    "course": "AVIA 310"
+  },
+  {
+    "course": "AVIA 408"
+  },
+  {
+    "course": "AVIA 474"
+  },
+  {
+    "course": "BET 100"
+  },
+  {
+    "course": "BET 201"
+  },
+  {
+    "course": "BET 210"
+  },
+  {
+    "course": "BET 300"
+  },
+  {
+    "course": "BET 320"
+  },
+  {
+    "course": "BET 340"
+  },
+  {
+    "course": "BET 350"
+  },
+  {
+    "course": "BET 360"
+  },
+  {
+    "course": "BET 405"
+  },
+  {
+    "course": "BET 420"
+  },
+  {
+    "course": "BET 430"
+  },
+  {
+    "course": "BET 450"
+  },
+  {
+    "course": "BET 460"
+  },
+  {
+    "course": "BET 580"
+  },
+  {
+    "course": "BIOL 110"
+  },
+  {
+    "course": "BIOL 130"
+  },
+  {
+    "course": "BIOL 201"
+  },
+  {
+    "course": "BIOL 225"
+  },
+  {
+    "course": "BIOL 235"
+  },
+  {
+    "course": "BIOL 239"
+  },
+  {
+    "course": "BIOL 240"
+  },
+  {
+    "course": "BIOL 251"
+  },
+  {
+    "course": "BIOL 266"
+  },
+  {
+    "course": "BIOL 273"
+  },
+  {
+    "course": "BIOL 308"
+  },
+  {
+    "course": "BIOL 310"
+  },
+  {
+    "course": "BIOL 323"
+  },
+  {
+    "course": "BIOL 342"
+  },
+  {
+    "course": "BIOL 345"
+  },
+  {
+    "course": "BIOL 349"
+  },
+  {
+    "course": "BIOL 350"
+  },
+  {
+    "course": "BIOL 354"
+  },
+  {
+    "course": "BIOL 359"
+  },
+  {
+    "course": "BIOL 370"
+  },
+  {
+    "course": "BIOL 376"
+  },
+  {
+    "course": "BIOL 403"
+  },
+  {
+    "course": "BIOL 433"
+  },
+  {
+    "course": "BIOL 434"
+  },
+  {
+    "course": "BIOL 439"
+  },
+  {
+    "course": "BIOL 443"
+  },
+  {
+    "course": "BIOL 444"
+  },
+  {
+    "course": "BIOL 447"
+  },
+  {
+    "course": "BIOL 448"
+  },
+  {
+    "course": "BIOL 451"
+  },
+  {
+    "course": "BIOL 455"
+  },
+  {
+    "course": "BIOL 458"
+  },
+  {
+    "course": "BIOL 462"
+  },
+  {
+    "course": "BIOL 469"
+  },
+  {
+    "course": "BIOL 470"
+  },
+  {
+    "course": "BIOL 472"
+  },
+  {
+    "course": "BIOL 473"
+  },
+  {
+    "course": "BIOL 479"
+  },
+  {
+    "course": "BIOL 489"
+  },
+  {
+    "course": "BLKST 103"
+  },
+  {
+    "course": "BLKST 203"
+  },
+  {
+    "course": "BLKST 340"
+  },
+  {
+    "course": "BLKST 399"
+  },
+  {
+    "course": "BME 101"
+  },
+  {
+    "course": "BME 121"
+  },
+  {
+    "course": "BME 161"
+  },
+  {
+    "course": "BME 181"
+  },
+  {
+    "course": "BME 182"
+  },
+  {
+    "course": "BME 201"
+  },
+  {
+    "course": "BME 281"
+  },
+  {
+    "course": "BME 282"
+  },
+  {
+    "course": "BME 285"
+  },
+  {
+    "course": "BME 302"
+  },
+  {
+    "course": "BME 356"
+  },
+  {
+    "course": "BME 362"
+  },
+  {
+    "course": "BME 364"
+  },
+  {
+    "course": "BME 384"
+  },
+  {
+    "course": "BME 386"
+  },
+  {
+    "course": "BME 399"
+  },
+  {
+    "course": "BME 400"
+  },
+  {
+    "course": "BME 401"
+  },
+  {
+    "course": "BME 411"
+  },
+  {
+    "course": "BME 461"
+  },
+  {
+    "course": "BME 499"
+  },
+  {
+    "course": "BME 530"
+  },
+  {
+    "course": "BME 540"
+  },
+  {
+    "course": "BME 550"
+  },
+  {
+    "course": "CDNST 101"
+  },
+  {
+    "course": "CDNST 201"
+  },
+  {
+    "course": "CFM 101"
+  },
+  {
+    "course": "CFM 401"
+  },
+  {
+    "course": "CHE 100"
+  },
+  {
+    "course": "CHE 102"
+  },
+  {
+    "course": "CHE 120"
+  },
+  {
+    "course": "CHE 180"
+  },
+  {
+    "course": "CHE 200"
+  },
+  {
+    "course": "CHE 201"
+  },
+  {
+    "course": "CHE 202"
+  },
+  {
+    "course": "CHE 211"
+  },
+  {
+    "course": "CHE 220"
+  },
+  {
+    "course": "CHE 225"
+  },
+  {
+    "course": "CHE 230"
+  },
+  {
+    "course": "CHE 231"
+  },
+  {
+    "course": "CHE 241"
+  },
+  {
+    "course": "CHE 290"
+  },
+  {
+    "course": "CHE 291"
+  },
+  {
+    "course": "CHE 298"
+  },
+  {
+    "course": "CHE 299"
+  },
+  {
+    "course": "CHE 302"
+  },
+  {
+    "course": "CHE 313"
+  },
+  {
+    "course": "CHE 331"
+  },
+  {
+    "course": "CHE 341"
+  },
+  {
+    "course": "CHE 361"
+  },
+  {
+    "course": "CHE 383"
+  },
+  {
+    "course": "CHE 399"
+  },
+  {
+    "course": "CHE 401"
+  },
+  {
+    "course": "CHE 450"
+  },
+  {
+    "course": "CHE 480"
+  },
+  {
+    "course": "CHE 482"
+  },
+  {
+    "course": "CHE 490"
+  },
+  {
+    "course": "CHE 498"
+  },
+  {
+    "course": "CHE 499"
+  },
+  {
+    "course": "CHE 514"
+  },
+  {
+    "course": "CHE 522"
+  },
+  {
+    "course": "CHE 541"
+  },
+  {
+    "course": "CHE 560"
+  },
+  {
+    "course": "CHE 565"
+  },
+  {
+    "course": "CHE 571"
+  },
+  {
+    "course": "CHEM 120"
+  },
+  {
+    "course": "CHEM 121"
+  },
+  {
+    "course": "CHEM 140"
+  },
+  {
+    "course": "CHEM 200"
+  },
+  {
+    "course": "CHEM 209"
+  },
+  {
+    "course": "CHEM 220"
+  },
+  {
+    "course": "CHEM 240"
+  },
+  {
+    "course": "CHEM 262"
+  },
+  {
+    "course": "CHEM 264"
+  },
+  {
+    "course": "CHEM 266"
+  },
+  {
+    "course": "CHEM 267"
+  },
+  {
+    "course": "CHEM 310"
+  },
+  {
+    "course": "CHEM 323"
+  },
+  {
+    "course": "CHEM 331"
+  },
+  {
+    "course": "CHEM 333"
+  },
+  {
+    "course": "CHEM 356"
+  },
+  {
+    "course": "CHEM 370"
+  },
+  {
+    "course": "CHEM 381"
+  },
+  {
+    "course": "CHEM 400"
+  },
+  {
+    "course": "CHEM 430"
+  },
+  {
+    "course": "CHEM 432"
+  },
+  {
+    "course": "CHEM 464"
+  },
+  {
+    "course": "CHEM 481"
+  },
+  {
+    "course": "CHEM 495"
+  },
+  {
+    "course": "CI 100"
+  },
+  {
+    "course": "CI 200"
+  },
+  {
+    "course": "CIVE 100"
+  },
+  {
+    "course": "CIVE 104"
+  },
+  {
+    "course": "CIVE 115"
+  },
+  {
+    "course": "CIVE 204"
+  },
+  {
+    "course": "CIVE 221"
+  },
+  {
+    "course": "CIVE 224"
+  },
+  {
+    "course": "CIVE 241"
+  },
+  {
+    "course": "CIVE 265"
+  },
+  {
+    "course": "CIVE 298"
+  },
+  {
+    "course": "CIVE 306"
+  },
+  {
+    "course": "CIVE 310"
+  },
+  {
+    "course": "CIVE 343"
+  },
+  {
+    "course": "CIVE 354"
+  },
+  {
+    "course": "CIVE 375"
+  },
+  {
+    "course": "CIVE 399"
+  },
+  {
+    "course": "CIVE 495"
+  },
+  {
+    "course": "CIVE 497"
+  },
+  {
+    "course": "CIVE 517"
+  },
+  {
+    "course": "CLAS 100"
+  },
+  {
+    "course": "CLAS 104"
+  },
+  {
+    "course": "CLAS 202"
+  },
+  {
+    "course": "CLAS 210"
+  },
+  {
+    "course": "CLAS 221"
+  },
+  {
+    "course": "CLAS 241"
+  },
+  {
+    "course": "CLAS 251"
+  },
+  {
+    "course": "CLAS 325"
+  },
+  {
+    "course": "CLAS 326"
+  },
+  {
+    "course": "CLAS 486"
+  },
+  {
+    "course": "CMW 201"
+  },
+  {
+    "course": "CMW 202"
+  },
+  {
+    "course": "CO 227"
+  },
+  {
+    "course": "CO 250"
+  },
+  {
+    "course": "CO 255"
+  },
+  {
+    "course": "CO 330"
+  },
+  {
+    "course": "CO 342"
+  },
+  {
+    "course": "CO 351"
+  },
+  {
+    "course": "CO 367"
+  },
+  {
+    "course": "CO 370"
+  },
+  {
+    "course": "CO 372"
+  },
+  {
+    "course": "CO 431"
+  },
+  {
+    "course": "CO 439"
+  },
+  {
+    "course": "CO 442"
+  },
+  {
+    "course": "CO 450"
+  },
+  {
+    "course": "CO 456"
+  },
+  {
+    "course": "CO 466"
+  },
+  {
+    "course": "CO 485"
+  },
+  {
+    "course": "CO 487"
+  },
+  {
+    "course": "COGSCI 300"
+  },
+  {
+    "course": "COMM 101"
+  },
+  {
+    "course": "COMM 421"
+  },
+  {
+    "course": "COMM 431"
+  },
+  {
+    "course": "COMM 433"
+  },
+  {
+    "course": "COMMST 100"
+  },
+  {
+    "course": "COMMST 101"
+  },
+  {
+    "course": "COMMST 102"
+  },
+  {
+    "course": "COMMST 103"
+  },
+  {
+    "course": "COMMST 149"
+  },
+  {
+    "course": "COMMST 191"
+  },
+  {
+    "course": "COMMST 192"
+  },
+  {
+    "course": "COMMST 193"
+  },
+  {
+    "course": "COMMST 203"
+  },
+  {
+    "course": "COMMST 204"
+  },
+  {
+    "course": "COMMST 220"
+  },
+  {
+    "course": "COMMST 223"
+  },
+  {
+    "course": "COMMST 225"
+  },
+  {
+    "course": "COMMST 226"
+  },
+  {
+    "course": "COMMST 228"
+  },
+  {
+    "course": "COMMST 324"
+  },
+  {
+    "course": "COMMST 402"
+  },
+  {
+    "course": "COMMST 490"
+  },
+  {
+    "course": "CROAT 101"
+  },
+  {
+    "course": "CS 100"
+  },
+  {
+    "course": "CS 105"
+  },
+  {
+    "course": "CS 114"
+  },
+  {
+    "course": "CS 115"
+  },
+  {
+    "course": "CS 116"
+  },
+  {
+    "course": "CS 135"
+  },
+  {
+    "course": "CS 136"
+  },
+  {
+    "course": "CS 137"
+  },
+  {
+    "course": "CS 145"
+  },
+  {
+    "course": "CS 234"
+  },
+  {
+    "course": "CS 240"
+  },
+  {
+    "course": "CS 241"
+  },
+  {
+    "course": "CS 245"
+  },
+  {
+    "course": "CS 246"
+  },
+  {
+    "course": "CS 251"
+  },
+  {
+    "course": "CS 330"
+  },
+  {
+    "course": "CS 335"
+  },
+  {
+    "course": "CS 338"
+  },
+  {
+    "course": "CS 341"
+  },
+  {
+    "course": "CS 343"
+  },
+  {
+    "course": "CS 346"
+  },
+  {
+    "course": "CS 348"
+  },
+  {
+    "course": "CS 349"
+  },
+  {
+    "course": "CS 350"
+  },
+  {
+    "course": "CS 360"
+  },
+  {
+    "course": "CS 370"
+  },
+  {
+    "course": "CS 398"
+  },
+  {
+    "course": "CS 430"
+  },
+  {
+    "course": "CS 431"
+  },
+  {
+    "course": "CS 445"
+  },
+  {
+    "course": "CS 449"
+  },
+  {
+    "course": "CS 451"
+  },
+  {
+    "course": "CS 453"
+  },
+  {
+    "course": "CS 454"
+  },
+  {
+    "course": "CS 456"
+  },
+  {
+    "course": "CS 459"
+  },
+  {
+    "course": "CS 466"
+  },
+  {
+    "course": "CS 479"
+  },
+  {
+    "course": "CS 480"
+  },
+  {
+    "course": "CS 485"
+  },
+  {
+    "course": "CS 486"
+  },
+  {
+    "course": "CS 488"
+  },
+  {
+    "course": "CS 489"
+  },
+  {
+    "course": "CS 493"
+  },
+  {
+    "course": "DAC 201"
+  },
+  {
+    "course": "DAC 202"
+  },
+  {
+    "course": "DAC 203"
+  },
+  {
+    "course": "DAC 204"
+  },
+  {
+    "course": "DAC 209"
+  },
+  {
+    "course": "DAC 246"
+  },
+  {
+    "course": "DAC 300"
+  },
+  {
+    "course": "DAC 302"
+  },
+  {
+    "course": "DAC 303"
+  },
+  {
+    "course": "DAC 309"
+  },
+  {
+    "course": "DAC 401"
+  },
+  {
+    "course": "DAC 402"
+  },
+  {
+    "course": "DUTCH 101"
+  },
+  {
+    "course": "EARTH 121"
+  },
+  {
+    "course": "EARTH 122"
+  },
+  {
+    "course": "EARTH 123"
+  },
+  {
+    "course": "EARTH 223"
+  },
+  {
+    "course": "EARTH 231"
+  },
+  {
+    "course": "EARTH 235"
+  },
+  {
+    "course": "EARTH 260"
+  },
+  {
+    "course": "EARTH 321"
+  },
+  {
+    "course": "EARTH 331"
+  },
+  {
+    "course": "EARTH 342"
+  },
+  {
+    "course": "EARTH 421"
+  },
+  {
+    "course": "EARTH 439"
+  },
+  {
+    "course": "EARTH 440"
+  },
+  {
+    "course": "EARTH 444"
+  },
+  {
+    "course": "EARTH 458"
+  },
+  {
+    "course": "EARTH 461"
+  },
+  {
+    "course": "ECE 105"
+  },
+  {
+    "course": "ECE 109"
+  },
+  {
+    "course": "ECE 150"
+  },
+  {
+    "course": "ECE 190"
+  },
+  {
+    "course": "ECE 198"
+  },
+  {
+    "course": "ECE 201"
+  },
+  {
+    "course": "ECE 202"
+  },
+  {
+    "course": "ECE 203"
+  },
+  {
+    "course": "ECE 204"
+  },
+  {
+    "course": "ECE 205"
+  },
+  {
+    "course": "ECE 206"
+  },
+  {
+    "course": "ECE 207"
+  },
+  {
+    "course": "ECE 208"
+  },
+  {
+    "course": "ECE 222"
+  },
+  {
+    "course": "ECE 224"
+  },
+  {
+    "course": "ECE 231"
+  },
+  {
+    "course": "ECE 240"
+  },
+  {
+    "course": "ECE 250"
+  },
+  {
+    "course": "ECE 252"
+  },
+  {
+    "course": "ECE 260"
+  },
+  {
+    "course": "ECE 298"
+  },
+  {
+    "course": "ECE 302"
+  },
+  {
+    "course": "ECE 305"
+  },
+  {
+    "course": "ECE 307"
+  },
+  {
+    "course": "ECE 313"
+  },
+  {
+    "course": "ECE 320"
+  },
+  {
+    "course": "ECE 331"
+  },
+  {
+    "course": "ECE 351"
+  },
+  {
+    "course": "ECE 356"
+  },
+  {
+    "course": "ECE 358"
+  },
+  {
+    "course": "ECE 360"
+  },
+  {
+    "course": "ECE 373"
+  },
+  {
+    "course": "ECE 401"
+  },
+  {
+    "course": "ECE 451"
+  },
+  {
+    "course": "ECE 493"
+  },
+  {
+    "course": "ECE 499"
+  },
+  {
+    "course": "ECON 101"
+  },
+  {
+    "course": "ECON 102"
+  },
+  {
+    "course": "ECON 201"
+  },
+  {
+    "course": "ECON 206"
+  },
+  {
+    "course": "ECON 211"
+  },
+  {
+    "course": "ECON 212"
+  },
+  {
+    "course": "ECON 221"
+  },
+  {
+    "course": "ECON 241"
+  },
+  {
+    "course": "ECON 254"
+  },
+  {
+    "course": "ECON 290"
+  },
+  {
+    "course": "ECON 306"
+  },
+  {
+    "course": "ECON 322"
+  },
+  {
+    "course": "ECON 323"
+  },
+  {
+    "course": "ECON 361"
+  },
+  {
+    "course": "ECON 366"
+  },
+  {
+    "course": "ECON 371"
+  },
+  {
+    "course": "ECON 372"
+  },
+  {
+    "course": "ECON 391"
+  },
+  {
+    "course": "ECON 393"
+  },
+  {
+    "course": "ECON 407"
+  },
+  {
+    "course": "ECON 408"
+  },
+  {
+    "course": "ECON 423"
+  },
+  {
+    "course": "ECON 424"
+  },
+  {
+    "course": "ECON 451"
+  },
+  {
+    "course": "ECON 472"
+  },
+  {
+    "course": "ECON 491"
+  },
+  {
+    "course": "ENBUS 102"
+  },
+  {
+    "course": "ENBUS 103"
+  },
+  {
+    "course": "ENBUS 202"
+  },
+  {
+    "course": "ENBUS 203"
+  },
+  {
+    "course": "ENBUS 204"
+  },
+  {
+    "course": "ENBUS 306"
+  },
+  {
+    "course": "ENBUS 309"
+  },
+  {
+    "course": "ENBUS 315"
+  },
+  {
+    "course": "ENBUS 406"
+  },
+  {
+    "course": "ENBUS 407"
+  },
+  {
+    "course": "ENBUS 408"
+  },
+  {
+    "course": "ENBUS 410"
+  },
+  {
+    "course": "ENBUS 475"
+  },
+  {
+    "course": "ENGL 103"
+  },
+  {
+    "course": "ENGL 109"
+  },
+  {
+    "course": "ENGL 119"
+  },
+  {
+    "course": "ENGL 190"
+  },
+  {
+    "course": "ENGL 191"
+  },
+  {
+    "course": "ENGL 192"
+  },
+  {
+    "course": "ENGL 193"
+  },
+  {
+    "course": "ENGL 203"
+  },
+  {
+    "course": "ENGL 204"
+  },
+  {
+    "course": "ENGL 206"
+  },
+  {
+    "course": "ENGL 225"
+  },
+  {
+    "course": "ENGL 230"
+  },
+  {
+    "course": "ENGL 234"
+  },
+  {
+    "course": "ENGL 251"
+  },
+  {
+    "course": "ENGL 262"
+  },
+  {
+    "course": "ENGL 292"
+  },
+  {
+    "course": "ENGL 293"
+  },
+  {
+    "course": "ENGL 295"
+  },
+  {
+    "course": "ENGL 304"
+  },
+  {
+    "course": "ENGL 318"
+  },
+  {
+    "course": "ENGL 325"
+  },
+  {
+    "course": "ENGL 335"
+  },
+  {
+    "course": "ENGL 340"
+  },
+  {
+    "course": "ENGL 344"
+  },
+  {
+    "course": "ENGL 345"
+  },
+  {
+    "course": "ENGL 363"
+  },
+  {
+    "course": "ENGL 371"
+  },
+  {
+    "course": "ENGL 378"
+  },
+  {
+    "course": "ENGL 406"
+  },
+  {
+    "course": "ENGL 432"
+  },
+  {
+    "course": "ENGL 486"
+  },
+  {
+    "course": "ENGL 492"
+  },
+  {
+    "course": "ENGL 493"
+  },
+  {
+    "course": "ENVE 100"
+  },
+  {
+    "course": "ENVE 115"
+  },
+  {
+    "course": "ENVE 175"
+  },
+  {
+    "course": "ENVE 225"
+  },
+  {
+    "course": "ENVE 277"
+  },
+  {
+    "course": "ENVE 279"
+  },
+  {
+    "course": "ENVE 299"
+  },
+  {
+    "course": "ENVE 382"
+  },
+  {
+    "course": "ENVE 400"
+  },
+  {
+    "course": "ENVE 481"
+  },
+  {
+    "course": "ENVE 498"
+  },
+  {
+    "course": "ENVS 105"
+  },
+  {
+    "course": "ENVS 131"
+  },
+  {
+    "course": "ENVS 178"
+  },
+  {
+    "course": "ENVS 195"
+  },
+  {
+    "course": "ENVS 200"
+  },
+  {
+    "course": "ENVS 205"
+  },
+  {
+    "course": "ENVS 278"
+  },
+  {
+    "course": "ENVS 404"
+  },
+  {
+    "course": "ERS 101"
+  },
+  {
+    "course": "ERS 201"
+  },
+  {
+    "course": "ERS 202"
+  },
+  {
+    "course": "ERS 215"
+  },
+  {
+    "course": "ERS 221"
+  },
+  {
+    "course": "ERS 225"
+  },
+  {
+    "course": "ERS 270"
+  },
+  {
+    "course": "ERS 300"
+  },
+  {
+    "course": "ERS 301"
+  },
+  {
+    "course": "ERS 302"
+  },
+  {
+    "course": "ERS 315"
+  },
+  {
+    "course": "ERS 316"
+  },
+  {
+    "course": "ERS 335"
+  },
+  {
+    "course": "ERS 365"
+  },
+  {
+    "course": "ERS 400"
+  },
+  {
+    "course": "ERS 454"
+  },
+  {
+    "course": "ERS 462"
+  },
+  {
+    "course": "ERS 484"
+  },
+  {
+    "course": "FINE 100"
+  },
+  {
+    "course": "FINE 150"
+  },
+  {
+    "course": "FINE 202"
+  },
+  {
+    "course": "FINE 225"
+  },
+  {
+    "course": "FINE 231"
+  },
+  {
+    "course": "FINE 243"
+  },
+  {
+    "course": "FINE 272"
+  },
+  {
+    "course": "FINE 304"
+  },
+  {
+    "course": "FINE 315"
+  },
+  {
+    "course": "FINE 343"
+  },
+  {
+    "course": "FINE 407"
+  },
+  {
+    "course": "FINE 472"
+  },
+  {
+    "course": "FR 101"
+  },
+  {
+    "course": "FR 151"
+  },
+  {
+    "course": "FR 152"
+  },
+  {
+    "course": "FR 250"
+  },
+  {
+    "course": "FR 251"
+  },
+  {
+    "course": "FR 252"
+  },
+  {
+    "course": "FR 276"
+  },
+  {
+    "course": "FR 296"
+  },
+  {
+    "course": "FR 297"
+  },
+  {
+    "course": "FR 303"
+  },
+  {
+    "course": "FR 332"
+  },
+  {
+    "course": "FR 351"
+  },
+  {
+    "course": "FR 353"
+  },
+  {
+    "course": "GBDA 101"
+  },
+  {
+    "course": "GBDA 102"
+  },
+  {
+    "course": "GBDA 201"
+  },
+  {
+    "course": "GBDA 202"
+  },
+  {
+    "course": "GBDA 203"
+  },
+  {
+    "course": "GBDA 204"
+  },
+  {
+    "course": "GBDA 210"
+  },
+  {
+    "course": "GBDA 212"
+  },
+  {
+    "course": "GBDA 228"
+  },
+  {
+    "course": "GBDA 410"
+  },
+  {
+    "course": "GBDA 412"
+  },
+  {
+    "course": "GBDA 413"
+  },
+  {
+    "course": "GBDA 414"
+  },
+  {
+    "course": "GBDA 465"
+  },
+  {
+    "course": "GENE 119"
+  },
+  {
+    "course": "GENE 315"
+  },
+  {
+    "course": "GENE 395"
+  },
+  {
+    "course": "GENE 403"
+  },
+  {
+    "course": "GENE 404"
+  },
+  {
+    "course": "GENE 415"
+  },
+  {
+    "course": "GENE 501"
+  },
+  {
+    "course": "GENE 502"
+  },
+  {
+    "course": "GENE 503"
+  },
+  {
+    "course": "GEOE 100"
+  },
+  {
+    "course": "GEOE 115"
+  },
+  {
+    "course": "GEOE 221"
+  },
+  {
+    "course": "GEOE 299"
+  },
+  {
+    "course": "GEOE 354"
+  },
+  {
+    "course": "GEOE 400"
+  },
+  {
+    "course": "GEOE 498"
+  },
+  {
+    "course": "GEOG 100"
+  },
+  {
+    "course": "GEOG 101"
+  },
+  {
+    "course": "GEOG 181"
+  },
+  {
+    "course": "GEOG 187"
+  },
+  {
+    "course": "GEOG 203"
+  },
+  {
+    "course": "GEOG 205"
+  },
+  {
+    "course": "GEOG 207"
+  },
+  {
+    "course": "GEOG 219"
+  },
+  {
+    "course": "GEOG 225"
+  },
+  {
+    "course": "GEOG 233"
+  },
+  {
+    "course": "GEOG 271"
+  },
+  {
+    "course": "GEOG 281"
+  },
+  {
+    "course": "GEOG 293"
+  },
+  {
+    "course": "GEOG 294"
+  },
+  {
+    "course": "GEOG 302"
+  },
+  {
+    "course": "GEOG 303"
+  },
+  {
+    "course": "GEOG 305"
+  },
+  {
+    "course": "GEOG 310"
+  },
+  {
+    "course": "GEOG 316"
+  },
+  {
+    "course": "GEOG 319"
+  },
+  {
+    "course": "GEOG 356"
+  },
+  {
+    "course": "GEOG 359"
+  },
+  {
+    "course": "GEOG 371"
+  },
+  {
+    "course": "GEOG 387"
+  },
+  {
+    "course": "GEOG 391"
+  },
+  {
+    "course": "GEOG 403"
+  },
+  {
+    "course": "GEOG 404"
+  },
+  {
+    "course": "GEOG 453"
+  },
+  {
+    "course": "GEOG 462"
+  },
+  {
+    "course": "GEOG 481"
+  },
+  {
+    "course": "GER 100"
+  },
+  {
+    "course": "GER 101"
+  },
+  {
+    "course": "GER 102"
+  },
+  {
+    "course": "GER 120"
+  },
+  {
+    "course": "GER 200"
+  },
+  {
+    "course": "GER 201"
+  },
+  {
+    "course": "GER 202"
+  },
+  {
+    "course": "GER 261"
+  },
+  {
+    "course": "GER 283"
+  },
+  {
+    "course": "GERON 201"
+  },
+  {
+    "course": "GERON 218"
+  },
+  {
+    "course": "GERON 220"
+  },
+  {
+    "course": "GRK 101"
+  },
+  {
+    "course": "GRK 201"
+  },
+  {
+    "course": "GSJ 101"
+  },
+  {
+    "course": "GSJ 108"
+  },
+  {
+    "course": "GSJ 201"
+  },
+  {
+    "course": "GSJ 203"
+  },
+  {
+    "course": "GSJ 232"
+  },
+  {
+    "course": "GSJ 327"
+  },
+  {
+    "course": "GSJ 380"
+  },
+  {
+    "course": "GSJ 472"
+  },
+  {
+    "course": "GSJ 473"
+  },
+  {
+    "course": "HEALTH 105"
+  },
+  {
+    "course": "HEALTH 107"
+  },
+  {
+    "course": "HEALTH 395"
+  },
+  {
+    "course": "HHUM 101"
+  },
+  {
+    "course": "HHUM 263"
+  },
+  {
+    "course": "HHUM 307"
+  },
+  {
+    "course": "HIST 101"
+  },
+  {
+    "course": "HIST 103"
+  },
+  {
+    "course": "HIST 110"
+  },
+  {
+    "course": "HIST 113"
+  },
+  {
+    "course": "HIST 115"
+  },
+  {
+    "course": "HIST 200"
+  },
+  {
+    "course": "HIST 207"
+  },
+  {
+    "course": "HIST 210"
+  },
+  {
+    "course": "HIST 212"
+  },
+  {
+    "course": "HIST 223"
+  },
+  {
+    "course": "HIST 225"
+  },
+  {
+    "course": "HIST 232"
+  },
+  {
+    "course": "HIST 242"
+  },
+  {
+    "course": "HIST 250"
+  },
+  {
+    "course": "HIST 256"
+  },
+  {
+    "course": "HIST 260"
+  },
+  {
+    "course": "HIST 269"
+  },
+  {
+    "course": "HIST 312"
+  },
+  {
+    "course": "HIST 322"
+  },
+  {
+    "course": "HIST 348"
+  },
+  {
+    "course": "HIST 358"
+  },
+  {
+    "course": "HIST 389"
+  },
+  {
+    "course": "HIST 391"
+  },
+  {
+    "course": "HIST 422"
+  },
+  {
+    "course": "HLTH 101"
+  },
+  {
+    "course": "HLTH 103"
+  },
+  {
+    "course": "HLTH 201"
+  },
+  {
+    "course": "HLTH 202"
+  },
+  {
+    "course": "HLTH 204"
+  },
+  {
+    "course": "HLTH 205"
+  },
+  {
+    "course": "HLTH 217"
+  },
+  {
+    "course": "HLTH 218"
+  },
+  {
+    "course": "HLTH 220"
+  },
+  {
+    "course": "HLTH 290"
+  },
+  {
+    "course": "HLTH 301"
+  },
+  {
+    "course": "HLTH 303"
+  },
+  {
+    "course": "HLTH 304"
+  },
+  {
+    "course": "HLTH 333"
+  },
+  {
+    "course": "HLTH 340"
+  },
+  {
+    "course": "HLTH 341"
+  },
+  {
+    "course": "HLTH 380"
+  },
+  {
+    "course": "HLTH 410"
+  },
+  {
+    "course": "HLTH 427"
+  },
+  {
+    "course": "HLTH 442"
+  },
+  {
+    "course": "HLTH 448"
+  },
+  {
+    "course": "HLTH 451"
+  },
+  {
+    "course": "HLTH 453"
+  },
+  {
+    "course": "HLTH 465"
+  },
+  {
+    "course": "HLTH 480"
+  },
+  {
+    "course": "HRM 200"
+  },
+  {
+    "course": "HRM 301"
+  },
+  {
+    "course": "HRM 303"
+  },
+  {
+    "course": "HRM 305"
+  },
+  {
+    "course": "HRM 307"
+  },
+  {
+    "course": "HRM 400"
+  },
+  {
+    "course": "HRTS 101"
+  },
+  {
+    "course": "HRTS 201"
+  },
+  {
+    "course": "HRTS 305"
+  },
+  {
+    "course": "HRTS 390"
+  },
+  {
+    "course": "HUMSC 101"
+  },
+  {
+    "course": "INDENT 200"
+  },
+  {
+    "course": "INDENT 210"
+  },
+  {
+    "course": "INDENT 225"
+  },
+  {
+    "course": "INDEV 401"
+  },
+  {
+    "course": "INDEV 404"
+  },
+  {
+    "course": "INDG 201"
+  },
+  {
+    "course": "INDG 272"
+  },
+  {
+    "course": "INNOV 200"
+  },
+  {
+    "course": "INNOV 300"
+  },
+  {
+    "course": "INNOV 311"
+  },
+  {
+    "course": "INTEG 10"
+  },
+  {
+    "course": "INTEG 120"
+  },
+  {
+    "course": "INTEG 210"
+  },
+  {
+    "course": "INTEG 220"
+  },
+  {
+    "course": "INTEG 320"
+  },
+  {
+    "course": "INTEG 340"
+  },
+  {
+    "course": "ITAL 101"
+  },
+  {
+    "course": "ITAL 201"
+  },
+  {
+    "course": "ITALST 100"
+  },
+  {
+    "course": "ITALST 263"
+  },
+  {
+    "course": "ITALST 265"
+  },
+  {
+    "course": "ITALST 291"
+  },
+  {
+    "course": "JS 203"
+  },
+  {
+    "course": "JS 228"
+  },
+  {
+    "course": "JS 233"
+  },
+  {
+    "course": "JS 236"
+  },
+  {
+    "course": "KIN 104"
+  },
+  {
+    "course": "KIN 121"
+  },
+  {
+    "course": "KIN 202"
+  },
+  {
+    "course": "KIN 217"
+  },
+  {
+    "course": "KIN 255"
+  },
+  {
+    "course": "KIN 301"
+  },
+  {
+    "course": "KIN 305"
+  },
+  {
+    "course": "KIN 308"
+  },
+  {
+    "course": "KIN 312"
+  },
+  {
+    "course": "KIN 314"
+  },
+  {
+    "course": "KIN 340"
+  },
+  {
+    "course": "KIN 343"
+  },
+  {
+    "course": "KIN 354"
+  },
+  {
+    "course": "KIN 357"
+  },
+  {
+    "course": "KIN 390"
+  },
+  {
+    "course": "KIN 391"
+  },
+  {
+    "course": "KIN 400"
+  },
+  {
+    "course": "KIN 406"
+  },
+  {
+    "course": "KIN 407"
+  },
+  {
+    "course": "KIN 416"
+  },
+  {
+    "course": "KIN 418"
+  },
+  {
+    "course": "KIN 420"
+  },
+  {
+    "course": "KIN 422"
+  },
+  {
+    "course": "KIN 431"
+  },
+  {
+    "course": "KIN 432"
+  },
+  {
+    "course": "KIN 433"
+  },
+  {
+    "course": "KIN 470"
+  },
+  {
+    "course": "KIN 471"
+  },
+  {
+    "course": "KIN 472"
+  },
+  {
+    "course": "KIN 491"
+  },
+  {
+    "course": "LAT 101"
+  },
+  {
+    "course": "LAT 201"
+  },
+  {
+    "course": "LAT 331"
+  },
+  {
+    "course": "LAT 490"
+  },
+  {
+    "course": "LS 101"
+  },
+  {
+    "course": "LS 202"
+  },
+  {
+    "course": "LS 221"
+  },
+  {
+    "course": "LS 227"
+  },
+  {
+    "course": "LS 229"
+  },
+  {
+    "course": "LS 235"
+  },
+  {
+    "course": "LS 271"
+  },
+  {
+    "course": "LS 272"
+  },
+  {
+    "course": "LS 273"
+  },
+  {
+    "course": "LS 283"
+  },
+  {
+    "course": "LS 291"
+  },
+  {
+    "course": "LS 300"
+  },
+  {
+    "course": "LS 305"
+  },
+  {
+    "course": "LS 319"
+  },
+  {
+    "course": "LS 322"
+  },
+  {
+    "course": "LS 327"
+  },
+  {
+    "course": "LS 329"
+  },
+  {
+    "course": "LS 342"
+  },
+  {
+    "course": "LS 344"
+  },
+  {
+    "course": "LS 348"
+  },
+  {
+    "course": "LS 351"
+  },
+  {
+    "course": "LS 364"
+  },
+  {
+    "course": "LS 374"
+  },
+  {
+    "course": "LS 387"
+  },
+  {
+    "course": "LS 401"
+  },
+  {
+    "course": "LS 402"
+  },
+  {
+    "course": "LS 403"
+  },
+  {
+    "course": "LS 423"
+  },
+  {
+    "course": "LS 428"
+  },
+  {
+    "course": "LS 433"
+  },
+  {
+    "course": "LS 435"
+  },
+  {
+    "course": "LS 463"
+  },
+  {
+    "course": "LS 496"
+  },
+  {
+    "course": "MATBUS 470"
+  },
+  {
+    "course": "MATBUS 471"
+  },
+  {
+    "course": "MATH 103"
+  },
+  {
+    "course": "MATH 104"
+  },
+  {
+    "course": "MATH 106"
+  },
+  {
+    "course": "MATH 114"
+  },
+  {
+    "course": "MATH 115"
+  },
+  {
+    "course": "MATH 116"
+  },
+  {
+    "course": "MATH 117"
+  },
+  {
+    "course": "MATH 124"
+  },
+  {
+    "course": "MATH 127"
+  },
+  {
+    "course": "MATH 128"
+  },
+  {
+    "course": "MATH 135"
+  },
+  {
+    "course": "MATH 136"
+  },
+  {
+    "course": "MATH 137"
+  },
+  {
+    "course": "MATH 138"
+  },
+  {
+    "course": "MATH 145"
+  },
+  {
+    "course": "MATH 147"
+  },
+  {
+    "course": "MATH 207"
+  },
+  {
+    "course": "MATH 217"
+  },
+  {
+    "course": "MATH 218"
+  },
+  {
+    "course": "MATH 225"
+  },
+  {
+    "course": "MATH 227"
+  },
+  {
+    "course": "MATH 228"
+  },
+  {
+    "course": "MATH 229"
+  },
+  {
+    "course": "MATH 235"
+  },
+  {
+    "course": "MATH 237"
+  },
+  {
+    "course": "MATH 239"
+  },
+  {
+    "course": "MATH 245"
+  },
+  {
+    "course": "MATH 247"
+  },
+  {
+    "course": "MATH 249"
+  },
+  {
+    "course": "ME 100"
+  },
+  {
+    "course": "ME 201"
+  },
+  {
+    "course": "ME 202"
+  },
+  {
+    "course": "ME 203"
+  },
+  {
+    "course": "ME 212"
+  },
+  {
+    "course": "ME 219"
+  },
+  {
+    "course": "ME 220"
+  },
+  {
+    "course": "ME 230"
+  },
+  {
+    "course": "ME 250"
+  },
+  {
+    "course": "ME 262"
+  },
+  {
+    "course": "ME 269"
+  },
+  {
+    "course": "ME 322"
+  },
+  {
+    "course": "ME 353"
+  },
+  {
+    "course": "ME 360"
+  },
+  {
+    "course": "ME 362"
+  },
+  {
+    "course": "ME 380"
+  },
+  {
+    "course": "ME 423"
+  },
+  {
+    "course": "ME 435"
+  },
+  {
+    "course": "ME 436"
+  },
+  {
+    "course": "ME 456"
+  },
+  {
+    "course": "ME 459"
+  },
+  {
+    "course": "ME 481"
+  },
+  {
+    "course": "ME 540"
+  },
+  {
+    "course": "ME 548"
+  },
+  {
+    "course": "ME 559"
+  },
+  {
+    "course": "ME 561"
+  },
+  {
+    "course": "ME 566"
+  },
+  {
+    "course": "ME 572"
+  },
+  {
+    "course": "ME 595"
+  },
+  {
+    "course": "ME 597"
+  },
+  {
+    "course": "MEDVL 115"
+  },
+  {
+    "course": "MEDVL 252"
+  },
+  {
+    "course": "MEDVL 260"
+  },
+  {
+    "course": "MEDVL 307"
+  },
+  {
+    "course": "MGMT 171"
+  },
+  {
+    "course": "MGMT 220"
+  },
+  {
+    "course": "MGMT 244"
+  },
+  {
+    "course": "MNS 10"
+  },
+  {
+    "course": "MNS 101"
+  },
+  {
+    "course": "MNS 211"
+  },
+  {
+    "course": "MNS 321"
+  },
+  {
+    "course": "MSE 100"
+  },
+  {
+    "course": "MSE 121"
+  },
+  {
+    "course": "MSE 211"
+  },
+  {
+    "course": "MSE 240"
+  },
+  {
+    "course": "MSE 251"
+  },
+  {
+    "course": "MSE 261"
+  },
+  {
+    "course": "MSE 271"
+  },
+  {
+    "course": "MSE 302"
+  },
+  {
+    "course": "MSE 311"
+  },
+  {
+    "course": "MSE 331"
+  },
+  {
+    "course": "MSE 332"
+  },
+  {
+    "course": "MSE 333"
+  },
+  {
+    "course": "MSE 343"
+  },
+  {
+    "course": "MSE 391"
+  },
+  {
+    "course": "MSE 392"
+  },
+  {
+    "course": "MSE 422"
+  },
+  {
+    "course": "MSE 432"
+  },
+  {
+    "course": "MSE 446"
+  },
+  {
+    "course": "MSE 491"
+  },
+  {
+    "course": "MSE 541"
+  },
+  {
+    "course": "MSE 551"
+  },
+  {
+    "course": "MTE 100"
+  },
+  {
+    "course": "MTE 121"
+  },
+  {
+    "course": "MTE 182"
+  },
+  {
+    "course": "MTE 201"
+  },
+  {
+    "course": "MTE 202"
+  },
+  {
+    "course": "MTE 203"
+  },
+  {
+    "course": "MTE 204"
+  },
+  {
+    "course": "MTE 219"
+  },
+  {
+    "course": "MTE 220"
+  },
+  {
+    "course": "MTE 241"
+  },
+  {
+    "course": "MTE 252"
+  },
+  {
+    "course": "MTE 262"
+  },
+  {
+    "course": "MTE 322"
+  },
+  {
+    "course": "MTE 352"
+  },
+  {
+    "course": "MTE 360"
+  },
+  {
+    "course": "MTE 380"
+  },
+  {
+    "course": "MTE 420"
+  },
+  {
+    "course": "MTE 421"
+  },
+  {
+    "course": "MTE 481"
+  },
+  {
+    "course": "MTE 484"
+  },
+  {
+    "course": "MTE 544"
+  },
+  {
+    "course": "MTE 545"
+  },
+  {
+    "course": "MTE 599"
+  },
+  {
+    "course": "MTHEL 131"
+  },
+  {
+    "course": "MTHEL 398"
+  },
+  {
+    "course": "MTHEL 99"
+  },
+  {
+    "course": "MUSIC 100"
+  },
+  {
+    "course": "MUSIC 110"
+  },
+  {
+    "course": "MUSIC 111"
+  },
+  {
+    "course": "MUSIC 116"
+  },
+  {
+    "course": "MUSIC 117"
+  },
+  {
+    "course": "MUSIC 140"
+  },
+  {
+    "course": "MUSIC 216"
+  },
+  {
+    "course": "MUSIC 217"
+  },
+  {
+    "course": "MUSIC 222"
+  },
+  {
+    "course": "MUSIC 226"
+  },
+  {
+    "course": "MUSIC 227"
+  },
+  {
+    "course": "MUSIC 232"
+  },
+  {
+    "course": "MUSIC 233"
+  },
+  {
+    "course": "MUSIC 246"
+  },
+  {
+    "course": "MUSIC 250"
+  },
+  {
+    "course": "MUSIC 261"
+  },
+  {
+    "course": "MUSIC 270"
+  },
+  {
+    "course": "MUSIC 271"
+  },
+  {
+    "course": "MUSIC 275"
+  },
+  {
+    "course": "MUSIC 316"
+  },
+  {
+    "course": "MUSIC 317"
+  },
+  {
+    "course": "MUSIC 326"
+  },
+  {
+    "course": "MUSIC 327"
+  },
+  {
+    "course": "MUSIC 332"
+  },
+  {
+    "course": "MUSIC 376"
+  },
+  {
+    "course": "MUSIC 380"
+  },
+  {
+    "course": "MUSIC 381"
+  },
+  {
+    "course": "MUSIC 390"
+  },
+  {
+    "course": "MUSIC 416"
+  },
+  {
+    "course": "MUSIC 417"
+  },
+  {
+    "course": "MUSIC 426"
+  },
+  {
+    "course": "MUSIC 427"
+  },
+  {
+    "course": "MUSIC 428"
+  },
+  {
+    "course": "MUSIC 491"
+  },
+  {
+    "course": "MUSIC 492"
+  },
+  {
+    "course": "NE 100"
+  },
+  {
+    "course": "NE 109"
+  },
+  {
+    "course": "NE 111"
+  },
+  {
+    "course": "NE 112"
+  },
+  {
+    "course": "NE 121"
+  },
+  {
+    "course": "NE 215"
+  },
+  {
+    "course": "NE 216"
+  },
+  {
+    "course": "NE 222"
+  },
+  {
+    "course": "NE 241"
+  },
+  {
+    "course": "NE 307"
+  },
+  {
+    "course": "NE 334"
+  },
+  {
+    "course": "NE 335"
+  },
+  {
+    "course": "NE 336"
+  },
+  {
+    "course": "NE 344"
+  },
+  {
+    "course": "NE 345"
+  },
+  {
+    "course": "NE 352"
+  },
+  {
+    "course": "NE 353"
+  },
+  {
+    "course": "NE 381"
+  },
+  {
+    "course": "NE 408"
+  },
+  {
+    "course": "NE 451"
+  },
+  {
+    "course": "NE 461"
+  },
+  {
+    "course": "NE 471"
+  },
+  {
+    "course": "NE 481"
+  },
+  {
+    "course": "NE 486"
+  },
+  {
+    "course": "NE 491"
+  },
+  {
+    "course": "PACS 101"
+  },
+  {
+    "course": "PACS 201"
+  },
+  {
+    "course": "PACS 202"
+  },
+  {
+    "course": "PACS 203"
+  },
+  {
+    "course": "PACS 302"
+  },
+  {
+    "course": "PACS 315"
+  },
+  {
+    "course": "PACS 323"
+  },
+  {
+    "course": "PACS 325"
+  },
+  {
+    "course": "PACS 329"
+  },
+  {
+    "course": "PACS 331"
+  },
+  {
+    "course": "PACS 390"
+  },
+  {
+    "course": "PACS 391"
+  },
+  {
+    "course": "PACS 398"
+  },
+  {
+    "course": "PACS 399"
+  },
+  {
+    "course": "PACS 401"
+  },
+  {
+    "course": "PD 1"
+  },
+  {
+    "course": "PD 10"
+  },
+  {
+    "course": "PD 11"
+  },
+  {
+    "course": "PD 12"
+  },
+  {
+    "course": "PD 13"
+  },
+  {
+    "course": "PD 14"
+  },
+  {
+    "course": "PD 19"
+  },
+  {
+    "course": "PD 20"
+  },
+  {
+    "course": "PD 22"
+  },
+  {
+    "course": "PD 3"
+  },
+  {
+    "course": "PD 5"
+  },
+  {
+    "course": "PD 7"
+  },
+  {
+    "course": "PD 9"
+  },
+  {
+    "course": "PDARCH 2"
+  },
+  {
+    "course": "PHARM 150"
+  },
+  {
+    "course": "PHARM 361"
+  },
+  {
+    "course": "PHARM 366"
+  },
+  {
+    "course": "PHARM 375"
+  },
+  {
+    "course": "PHARM 377"
+  },
+  {
+    "course": "PHARM 380"
+  },
+  {
+    "course": "PHARM 464"
+  },
+  {
+    "course": "PHARM 466"
+  },
+  {
+    "course": "PHARM 473"
+  },
+  {
+    "course": "PHIL 101"
+  },
+  {
+    "course": "PHIL 121"
+  },
+  {
+    "course": "PHIL 145"
+  },
+  {
+    "course": "PHIL 201"
+  },
+  {
+    "course": "PHIL 215"
+  },
+  {
+    "course": "PHIL 221"
+  },
+  {
+    "course": "PHIL 226"
+  },
+  {
+    "course": "PHIL 228"
+  },
+  {
+    "course": "PHIL 240"
+  },
+  {
+    "course": "PHIL 251"
+  },
+  {
+    "course": "PHIL 256"
+  },
+  {
+    "course": "PHIL 284"
+  },
+  {
+    "course": "PHIL 324"
+  },
+  {
+    "course": "PHIL 327"
+  },
+  {
+    "course": "PHIL 356"
+  },
+  {
+    "course": "PHIL 384"
+  },
+  {
+    "course": "PHIL 420"
+  },
+  {
+    "course": "PHIL 458"
+  },
+  {
+    "course": "PHIL 471"
+  },
+  {
+    "course": "PHIL 498"
+  },
+  {
+    "course": "PHYS 10"
+  },
+  {
+    "course": "PHYS 105"
+  },
+  {
+    "course": "PHYS 111"
+  },
+  {
+    "course": "PHYS 115"
+  },
+  {
+    "course": "PHYS 121"
+  },
+  {
+    "course": "PHYS 225"
+  },
+  {
+    "course": "PHYS 249"
+  },
+  {
+    "course": "PHYS 256"
+  },
+  {
+    "course": "PHYS 275"
+  },
+  {
+    "course": "PHYS 342"
+  },
+  {
+    "course": "PHYS 358"
+  },
+  {
+    "course": "PHYS 359"
+  },
+  {
+    "course": "PHYS 363"
+  },
+  {
+    "course": "PHYS 364"
+  },
+  {
+    "course": "PHYS 380"
+  },
+  {
+    "course": "PHYS 434"
+  },
+  {
+    "course": "PHYS 442"
+  },
+  {
+    "course": "PHYS 449"
+  },
+  {
+    "course": "PHYS 454"
+  },
+  {
+    "course": "PHYS 468"
+  },
+  {
+    "course": "PHYS 474"
+  },
+  {
+    "course": "PHYS 475"
+  },
+  {
+    "course": "PHYS 490"
+  },
+  {
+    "course": "PLAN 100"
+  },
+  {
+    "course": "PLAN 107"
+  },
+  {
+    "course": "PLAN 202"
+  },
+  {
+    "course": "PLAN 205"
+  },
+  {
+    "course": "PLAN 210"
+  },
+  {
+    "course": "PLAN 267"
+  },
+  {
+    "course": "PLAN 281"
+  },
+  {
+    "course": "PLAN 300"
+  },
+  {
+    "course": "PLAN 309"
+  },
+  {
+    "course": "PLAN 320"
+  },
+  {
+    "course": "PLAN 340"
+  },
+  {
+    "course": "PLAN 351"
+  },
+  {
+    "course": "PLAN 380"
+  },
+  {
+    "course": "PLAN 387"
+  },
+  {
+    "course": "PLAN 417"
+  },
+  {
+    "course": "PLAN 451"
+  },
+  {
+    "course": "PLAN 453"
+  },
+  {
+    "course": "PLAN 474"
+  },
+  {
+    "course": "PLAN 481"
+  },
+  {
+    "course": "PMATH 330"
+  },
+  {
+    "course": "PMATH 331"
+  },
+  {
+    "course": "PMATH 333"
+  },
+  {
+    "course": "PMATH 336"
+  },
+  {
+    "course": "PMATH 340"
+  },
+  {
+    "course": "PMATH 347"
+  },
+  {
+    "course": "PMATH 367"
+  },
+  {
+    "course": "PMATH 432"
+  },
+  {
+    "course": "PMATH 440"
+  },
+  {
+    "course": "PMATH 446"
+  },
+  {
+    "course": "PMATH 450"
+  },
+  {
+    "course": "PMATH 453"
+  },
+  {
+    "course": "PMATH 455"
+  },
+  {
+    "course": "PMATH 465"
+  },
+  {
+    "course": "PMATH 499"
+  },
+  {
+    "course": "PSCI 100"
+  },
+  {
+    "course": "PSCI 224"
+  },
+  {
+    "course": "PSCI 231"
+  },
+  {
+    "course": "PSCI 252"
+  },
+  {
+    "course": "PSCI 253"
+  },
+  {
+    "course": "PSCI 281"
+  },
+  {
+    "course": "PSCI 283"
+  },
+  {
+    "course": "PSCI 302"
+  },
+  {
+    "course": "PSCI 303"
+  },
+  {
+    "course": "PSCI 324"
+  },
+  {
+    "course": "PSCI 331"
+  },
+  {
+    "course": "PSCI 360"
+  },
+  {
+    "course": "PSCI 365"
+  },
+  {
+    "course": "PSCI 387"
+  },
+  {
+    "course": "PSCI 391"
+  },
+  {
+    "course": "PSCI 400"
+  },
+  {
+    "course": "PSCI 423"
+  },
+  {
+    "course": "PSCI 463"
+  },
+  {
+    "course": "PSCI 486"
+  },
+  {
+    "course": "PSCI 488"
+  },
+  {
+    "course": "PSYCH 101"
+  },
+  {
+    "course": "PSYCH 207"
+  },
+  {
+    "course": "PSYCH 211"
+  },
+  {
+    "course": "PSYCH 212"
+  },
+  {
+    "course": "PSYCH 218"
+  },
+  {
+    "course": "PSYCH 230"
+  },
+  {
+    "course": "PSYCH 238"
+  },
+  {
+    "course": "PSYCH 253"
+  },
+  {
+    "course": "PSYCH 256"
+  },
+  {
+    "course": "PSYCH 257"
+  },
+  {
+    "course": "PSYCH 261"
+  },
+  {
+    "course": "PSYCH 264"
+  },
+  {
+    "course": "PSYCH 291"
+  },
+  {
+    "course": "PSYCH 306"
+  },
+  {
+    "course": "PSYCH 307"
+  },
+  {
+    "course": "PSYCH 312"
+  },
+  {
+    "course": "PSYCH 317"
+  },
+  {
+    "course": "PSYCH 320"
+  },
+  {
+    "course": "PSYCH 336"
+  },
+  {
+    "course": "PSYCH 339"
+  },
+  {
+    "course": "PSYCH 340"
+  },
+  {
+    "course": "PSYCH 356"
+  },
+  {
+    "course": "PSYCH 363"
+  },
+  {
+    "course": "PSYCH 389"
+  },
+  {
+    "course": "PSYCH 390"
+  },
+  {
+    "course": "PSYCH 391"
+  },
+  {
+    "course": "PSYCH 447"
+  },
+  {
+    "course": "PSYCH 457"
+  },
+  {
+    "course": "PSYCH 461"
+  },
+  {
+    "course": "PSYCH 464"
+  },
+  {
+    "course": "PSYCH 470"
+  },
+  {
+    "course": "PSYCH 480"
+  },
+  {
+    "course": "PSYCH 481"
+  },
+  {
+    "course": "PSYCH 482"
+  },
+  {
+    "course": "PSYCH 483"
+  },
+  {
+    "course": "PSYCH 484"
+  },
+  {
+    "course": "PSYCH 485"
+  },
+  {
+    "course": "PSYCH 486"
+  },
+  {
+    "course": "PSYCH 492"
+  },
+  {
+    "course": "RCS 101"
+  },
+  {
+    "course": "RCS 110"
+  },
+  {
+    "course": "RCS 121"
+  },
+  {
+    "course": "RCS 204"
+  },
+  {
+    "course": "RCS 211"
+  },
+  {
+    "course": "RCS 220"
+  },
+  {
+    "course": "RCS 223"
+  },
+  {
+    "course": "RCS 228"
+  },
+  {
+    "course": "RCS 236"
+  },
+  {
+    "course": "RCS 260"
+  },
+  {
+    "course": "RCS 270"
+  },
+  {
+    "course": "RCS 272"
+  },
+  {
+    "course": "RCS 291"
+  },
+  {
+    "course": "RCS 315"
+  },
+  {
+    "course": "RCS 327"
+  },
+  {
+    "course": "RCS 344"
+  },
+  {
+    "course": "RCS 387"
+  },
+  {
+    "course": "RCS 398"
+  },
+  {
+    "course": "RCS 462"
+  },
+  {
+    "course": "REC 100"
+  },
+  {
+    "course": "REC 101"
+  },
+  {
+    "course": "REC 120"
+  },
+  {
+    "course": "REC 201"
+  },
+  {
+    "course": "REC 213"
+  },
+  {
+    "course": "REC 218"
+  },
+  {
+    "course": "REC 219"
+  },
+  {
+    "course": "REC 230"
+  },
+  {
+    "course": "REC 252"
+  },
+  {
+    "course": "REC 253"
+  },
+  {
+    "course": "REC 256"
+  },
+  {
+    "course": "REC 312"
+  },
+  {
+    "course": "REC 313"
+  },
+  {
+    "course": "REC 356"
+  },
+  {
+    "course": "REC 357"
+  },
+  {
+    "course": "REC 361"
+  },
+  {
+    "course": "REC 371"
+  },
+  {
+    "course": "REC 405"
+  },
+  {
+    "course": "REC 450"
+  },
+  {
+    "course": "REC 475"
+  },
+  {
+    "course": "REES 120"
+  },
+  {
+    "course": "REES 261"
+  },
+  {
+    "course": "RSCH 100"
+  },
+  {
+    "course": "RUSS 101"
+  },
+  {
+    "course": "SCBUS 123"
+  },
+  {
+    "course": "SCBUS 223"
+  },
+  {
+    "course": "SCBUS 323"
+  },
+  {
+    "course": "SCBUS 423"
+  },
+  {
+    "course": "SCI 206"
+  },
+  {
+    "course": "SCI 238"
+  },
+  {
+    "course": "SCI 300"
+  },
+  {
+    "course": "SCI 395"
+  },
+  {
+    "course": "SE 101"
+  },
+  {
+    "course": "SE 201"
+  },
+  {
+    "course": "SE 212"
+  },
+  {
+    "course": "SE 302"
+  },
+  {
+    "course": "SE 380"
+  },
+  {
+    "course": "SE 390"
+  },
+  {
+    "course": "SE 401"
+  },
+  {
+    "course": "SE 463"
+  },
+  {
+    "course": "SE 464"
+  },
+  {
+    "course": "SE 490"
+  },
+  {
+    "course": "SE 499"
+  },
+  {
+    "course": "SFM 101"
+  },
+  {
+    "course": "SFM 310"
+  },
+  {
+    "course": "SFM 328"
+  },
+  {
+    "course": "SFM 329"
+  },
+  {
+    "course": "SFM 403"
+  },
+  {
+    "course": "SFM 413"
+  },
+  {
+    "course": "SOC 101"
+  },
+  {
+    "course": "SOC 202"
+  },
+  {
+    "course": "SOC 221"
+  },
+  {
+    "course": "SOC 227"
+  },
+  {
+    "course": "SOC 229"
+  },
+  {
+    "course": "SOC 232"
+  },
+  {
+    "course": "SOC 241"
+  },
+  {
+    "course": "SOC 302"
+  },
+  {
+    "course": "SOC 305"
+  },
+  {
+    "course": "SOC 312"
+  },
+  {
+    "course": "SOC 322"
+  },
+  {
+    "course": "SOC 324"
+  },
+  {
+    "course": "SOC 327"
+  },
+  {
+    "course": "SOC 329"
+  },
+  {
+    "course": "SOC 342"
+  },
+  {
+    "course": "SOC 370"
+  },
+  {
+    "course": "SOC 385"
+  },
+  {
+    "course": "SOC 388"
+  },
+  {
+    "course": "SOC 402"
+  },
+  {
+    "course": "SOC 423"
+  },
+  {
+    "course": "SOC 433"
+  },
+  {
+    "course": "SOC 435"
+  },
+  {
+    "course": "SOC 436"
+  },
+  {
+    "course": "SOC 462"
+  },
+  {
+    "course": "SOC 465"
+  },
+  {
+    "course": "SOC 497"
+  },
+  {
+    "course": "SPAN 101"
+  },
+  {
+    "course": "SPAN 345"
+  },
+  {
+    "course": "SRF 101"
+  },
+  {
+    "course": "SRF 208"
+  },
+  {
+    "course": "SRF 220"
+  },
+  {
+    "course": "SRF 301"
+  },
+  {
+    "course": "SRF 304"
+  },
+  {
+    "course": "SRF 490"
+  },
+  {
+    "course": "STAT 202"
+  },
+  {
+    "course": "STAT 206"
+  },
+  {
+    "course": "STAT 220"
+  },
+  {
+    "course": "STAT 221"
+  },
+  {
+    "course": "STAT 230"
+  },
+  {
+    "course": "STAT 231"
+  },
+  {
+    "course": "STAT 240"
+  },
+  {
+    "course": "STAT 316"
+  },
+  {
+    "course": "STAT 322"
+  },
+  {
+    "course": "STAT 330"
+  },
+  {
+    "course": "STAT 331"
+  },
+  {
+    "course": "STAT 332"
+  },
+  {
+    "course": "STAT 333"
+  },
+  {
+    "course": "STAT 334"
+  },
+  {
+    "course": "STAT 337"
+  },
+  {
+    "course": "STAT 341"
+  },
+  {
+    "course": "STAT 371"
+  },
+  {
+    "course": "STAT 372"
+  },
+  {
+    "course": "STAT 373"
+  },
+  {
+    "course": "STAT 430"
+  },
+  {
+    "course": "STAT 431"
+  },
+  {
+    "course": "STAT 433"
+  },
+  {
+    "course": "STAT 441"
+  },
+  {
+    "course": "STAT 442"
+  },
+  {
+    "course": "STAT 443"
+  },
+  {
+    "course": "STV 100"
+  },
+  {
+    "course": "STV 210"
+  },
+  {
+    "course": "STV 305"
+  },
+  {
+    "course": "SYDE 101"
+  },
+  {
+    "course": "SYDE 111"
+  },
+  {
+    "course": "SYDE 113"
+  },
+  {
+    "course": "SYDE 121"
+  },
+  {
+    "course": "SYDE 161"
+  },
+  {
+    "course": "SYDE 181"
+  },
+  {
+    "course": "SYDE 202"
+  },
+  {
+    "course": "SYDE 211"
+  },
+  {
+    "course": "SYDE 212"
+  },
+  {
+    "course": "SYDE 252"
+  },
+  {
+    "course": "SYDE 262"
+  },
+  {
+    "course": "SYDE 286"
+  },
+  {
+    "course": "SYDE 292"
+  },
+  {
+    "course": "SYDE 401"
+  },
+  {
+    "course": "SYDE 411"
+  },
+  {
+    "course": "SYDE 461"
+  },
+  {
+    "course": "SYDE 499"
+  },
+  {
+    "course": "SYDE 522"
+  },
+  {
+    "course": "SYDE 534"
+  },
+  {
+    "course": "SYDE 542"
+  },
+  {
+    "course": "SYDE 543"
+  },
+  {
+    "course": "SYDE 572"
+  },
+  {
+    "course": "SYDE 575"
+  },
+  {
+    "course": "SYDE 577"
+  },
+  {
+    "course": "THPERF 102"
+  },
+  {
+    "course": "THPERF 149"
+  },
+  {
+    "course": "THPERF 220"
+  },
+  {
+    "course": "THPERF 243"
+  },
+  {
+    "course": "THPERF 246"
+  },
+  {
+    "course": "THPERF 301"
+  },
+  {
+    "course": "THPERF 306"
+  },
+  {
+    "course": "THPERF 387"
+  },
+  {
+    "course": "THPERF 400"
+  },
+  {
+    "course": "THPERF 406"
+  },
+  {
+    "course": "THPERF 490"
+  },
+  {
+    "course": "UNIV 101"
+  },
+  {
+    "course": "VCULT 100"
+  },
+  {
+    "course": "VCULT 208"
+  },
+  {
+    "course": "VCULT 209"
+  },
+  {
+    "course": "VCULT 241"
+  },
+  {
+    "course": "VCULT 252"
+  },
+  {
+    "course": "VCULT 300"
+  },
+  {
+    "course": "VCULT 400"
+  },
+  {
+    "course": "WKRPT 100"
+  },
+  {
+    "course": "WKRPT 200"
+  },
+  {
+    "course": "WKRPT 300"
+  },
+  {
+    "course": "WKRPT 400"
+  }
+]

@@ -20,15 +20,15 @@
         android:text="Subject"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/subject_filter_input"
+    <AutoCompleteTextView
+        android:id="@+id/subject_filter_autocomplete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="ECE"
-        android:inputType="textCapCharacters"
+        android:hint="Type to search subjects..."
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:inputType="textCapCharacters" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,15 +36,14 @@
         android:text="Course Code"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/course_code_filter_input"
+    <Spinner
+        android:id="@+id/course_code_filter_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="140"
-        android:inputType="text"
         android:background="@drawable/edit_text_background"
         android:padding="12dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:enabled="false" />
 
     <TextView
         android:layout_width="wrap_content"
