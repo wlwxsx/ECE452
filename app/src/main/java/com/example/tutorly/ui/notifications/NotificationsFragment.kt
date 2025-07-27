@@ -1,7 +1,10 @@
 package com.example.tutorly.ui.notifications
 
+
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import androidx.core.os.bundleOf
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -14,6 +17,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
 import androidx.lifecycle.ViewModelProvider
 import com.example.tutorly.databinding.FragmentNotificationsBinding
@@ -29,9 +33,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.tutorly.R
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
+
 
 class NotificationsFragment : Fragment() {
 
@@ -55,6 +61,7 @@ class NotificationsFragment : Fragment() {
         userRepository = UserRepository.getInstance()
         setupRecyclerView()
         fetchMatches()
+
         return binding.root
     }
 
@@ -66,16 +73,20 @@ class NotificationsFragment : Fragment() {
         }
     }
 
-    private fun fetchMatches() {
+    fun fetchMatches() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         db.collection("posts")
             .whereEqualTo("status", Post.STATUS_MATCHED)
             .get()
             .addOnSuccessListener { result ->
                 val posts = result.documents.mapNotNull { doc ->
-                    doc.toObject(Post::class.java)?.apply {
-                        scheduledTime = doc.getDate("scheduledTime") // Safe even if field doesn't exist yet
-                    }
+                    val post = doc.toObject(Post::class.java)
+                    post?.copy(
+                        ownerScheduledTimes = (doc["ownerScheduledTimes"] as? List<*>)
+                            ?.mapNotNull { (it as? com.google.firebase.Timestamp)?.toDate() },
+                        finalScheduledTime = (doc["finalScheduledTime"] as? Timestamp)?.toDate(),
+                        isTimeRejected = doc["isTimeRejected"] as? Boolean
+                    )
                 }
                 val relevantPosts = posts.filter {
                     (it.posterId == currentUserId || it.matchedId == currentUserId)
@@ -93,7 +104,17 @@ class NotificationsFragment : Fragment() {
                         val userResult = withContext(Dispatchers.IO) { userRepository.getUserById(otherUserId) }
                         val user = userResult.getOrNull() ?: return@mapNotNull null
                         val courseDisplay = (post.courseName + " " + post.courseCode).trim()
-                        MatchEntry(user.name, user.email, courseDisplay, post.id, post.scheduledTime, post.posterId)
+
+                        MatchEntry(
+                            name = user.name,
+                            email = user.email,
+                            course = courseDisplay,
+                            postId = post.id,
+                            posterId = post.posterId,
+                            ownerScheduledTimes = post.ownerScheduledTimes,
+                            finalScheduledTime = post.finalScheduledTime,
+                            isTimeRejected = post.isTimeRejected
+                        )
                     }
                     val oldSize = matchList.size
                     matchList.clear()
@@ -114,17 +135,64 @@ class NotificationsFragment : Fragment() {
     }
 }
 
-// Data class for match entry
 private data class MatchEntry(
     val name: String,
     val email: String,
     val course: String,
     val postId: String,
-    val scheduledTime: java.util.Date? = null, // Add this
+    val ownerScheduledTimes: List<Date>? = null,
+    val finalScheduledTime: Date? = null,
+    val isTimeRejected: Boolean? = null,
     val posterId: String
 )
+private fun showTimeSelectionDialog(
+    context: Context,
+    times: List<Date>,
+    onResult: (Date?) -> Unit
+) {
+    val options = times.map {
+        SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault()).format(it)
+    }.toMutableList()
+    options.add("None work for me")
 
-// Adapter for displaying matches
+    var selectedIndex = -1
+
+    val builder = AlertDialog.Builder(context)
+    builder.setTitle("Pick a time")
+        .setSingleChoiceItems(options.toTypedArray(), -1) { _, which ->
+            selectedIndex = which
+        }
+        .setPositiveButton("OK", null) // We'll override later
+        .setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+    val dialog = builder.create()
+
+    dialog.setOnShowListener {
+        val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val cancelButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+        // Style buttons
+        okButton?.setTextColor(android.graphics.Color.BLACK)
+        cancelButton?.setTextColor(android.graphics.Color.BLACK)
+
+        // Set safe click listener on OK button
+        okButton.setOnClickListener {
+            if (selectedIndex == -1) {
+                Toast.makeText(context, "Please select a time.", Toast.LENGTH_SHORT).show()
+            } else {
+                val selected = if (selectedIndex == options.lastIndex) null else times.getOrNull(selectedIndex)
+                onResult(selected)
+                dialog.dismiss()
+            }
+        }
+    }
+
+    dialog.show()
+}
+
+
 private class MatchAdapter(private val matches: List<MatchEntry>) : RecyclerView.Adapter<MatchAdapter.MatchViewHolder>() {
     class MatchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.match_name)
@@ -143,75 +211,123 @@ private class MatchAdapter(private val matches: List<MatchEntry>) : RecyclerView
         holder.email.text = match.email
         holder.courseCode.text = match.course
 
-
         val context = holder.itemView.context
-        val isAlreadyScheduled = match.scheduledTime != null
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         val isPostOwner = match.posterId == currentUserId
+        val hasFinalTime = match.finalScheduledTime != null || (match.isTimeRejected ?: false)
+        val hasOwnerTimes = !match.ownerScheduledTimes.isNullOrEmpty()
+
+        holder.setTime.text = when {
+            match.finalScheduledTime != null -> {
+                val formatted = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault()).format(match.finalScheduledTime)
+                "✔ Scheduled: $formatted"
+            }
+            match.isTimeRejected == true -> "✘ Rejected: Contact them for a new time"
+            else -> "⏳ Not scheduled yet"
+        }
 
         holder.scheduleButton.apply {
-            if (isAlreadyScheduled) {
-                Log.d("DEBUG", "The match is already scheduled at: ${match.scheduledTime} in postID: ${match.postId}")
-                text = context.getString(R.string.scheduled)
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                isEnabled = false
-                val dtf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault()).format(match.scheduledTime)
-                holder.setTime.text = dtf
-            } else if (isPostOwner) {
-                // Only post owners can schedule
-                isEnabled = true
-                text = context.getString(R.string.schedule)
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_green_dark))
+            when {
+                hasFinalTime -> {
+                    text = context.getString(R.string.completed)
+                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                    isEnabled = false
+                }
 
-                setOnClickListener {
-                    val now = Calendar.getInstance()
+                isPostOwner && !hasOwnerTimes -> {
+                    text = "Schedule"
+                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_green_dark))
+                    isEnabled = true
 
-                    // Date Picker
-                    val datePicker = DatePickerDialog(context, { _, year, month, day ->
-                        // Time Picker
-                        val timePicker = TimePickerDialog(context, { _, hour, minute ->
-                            val selectedDateTime = Calendar.getInstance().apply {
-                                set(year, month, day, hour, minute)
-                            }
-                            Log.d("DEBUG", "time selected: ${selectedDateTime.time}")
-                            if (selectedDateTime.after(Calendar.getInstance())) {
-                                Log.d("DEBUG", "Great the time is in the future")
-                                val scheduledTime = selectedDateTime.time
+                    setOnClickListener {
+                        showSchedulePickerDialog(
+                            context = context,
+                            onDone = { selectedTimes ->
+                                if (selectedTimes.isEmpty()) {
+                                    Toast.makeText(context, "Please select at least one time.", Toast.LENGTH_SHORT).show()
+                                    return@showSchedulePickerDialog
+                                }
+
                                 val db = FirebaseFirestore.getInstance()
-                                db.collection("posts")
-                                    .document(match.postId)
-                                    .update("scheduledTime", scheduledTime)
+                                db.collection("posts").document(match.postId)
+                                    .update("ownerScheduledTimes", selectedTimes)
                                     .addOnSuccessListener {
-                                        Log.d("FIRESTORE", "Attempting to update post ID: ${match.postId}")
-                                        Log.d("FIRESTORE", "scheduledTime value: $scheduledTime")
-                                        Toast.makeText(context, "Time scheduled!", Toast.LENGTH_SHORT).show()
-                                        text = context.getString(R.string.scheduled)
-                                        setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                                        isEnabled = false
+                                        Toast.makeText(context, "Times saved!", Toast.LENGTH_SHORT).show()
 
+                                        // Update button UI immediately
+                                        holder.scheduleButton.text = "WAITING"
+                                        holder.scheduleButton.setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                                        holder.scheduleButton.isEnabled = false
+
+                                        // Refresh the fragment
+                                        (context as? FragmentActivity)?.supportFragmentManager?.fragments
+                                            ?.filterIsInstance<NotificationsFragment>()
+                                            ?.firstOrNull()
+                                            ?.fetchMatches()
                                     }
                                     .addOnFailureListener {
-                                        Log.e("Firestore", "Error saving scheduled time: ${it.message}")
-                                        Toast.makeText(context, "Failed to save schedule. Try again.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Failed to save times", Toast.LENGTH_SHORT).show()
                                     }
-                            } else {
-                                Log.d("DEBUG", "Nooo the time is in the past")
-                                Toast.makeText(context, "Please select a future time.", Toast.LENGTH_SHORT).show()
+                            },
+                            onCancel = {
+                                Toast.makeText(context, "Cancelled schedule selection", Toast.LENGTH_SHORT).show()
                             }
-                        }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true)
+                        )
 
-                        timePicker.show()
-                    }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH))
-
-                    datePicker.datePicker.minDate = now.timeInMillis
-                    datePicker.show()
+                    }
                 }
-            } else {
-                // Not the post owner → button disabled
-                Log.d("DEBUG", "Not the post owner ID: you are $currentUserId, the owner is ${match.posterId}")
-                text = context.getString(R.string.schedule)
-                setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
-                isEnabled = false
+
+                !isPostOwner && hasOwnerTimes -> {
+                    text = "Select"
+                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.holo_blue_light))
+                    isEnabled = true
+
+                    setOnClickListener {
+                        showTimeSelectionDialog(context, match.ownerScheduledTimes!!) { selectedTime ->
+                            val db = FirebaseFirestore.getInstance()
+                            val updates = if (selectedTime != null) {
+                                mapOf(
+                                    "finalScheduledTime" to selectedTime,
+                                    "isTimeRejected" to false
+                                )
+                            } else {
+                                mapOf(
+                                    "finalScheduledTime" to null,
+                                    "isTimeRejected" to true
+                                )
+                            }
+
+                            db.collection("posts").document(match.postId)
+                                .update(updates)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "Time selection saved!", Toast.LENGTH_SHORT).show()
+
+                                    // Immediately update UI
+                                    text = context.getString(R.string.completed)
+                                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                                    isEnabled = false
+
+                                    // Optionally update the schedule label (without full refresh)
+                                    holder.setTime.text = when {
+                                        selectedTime != null -> {
+                                            val formatted = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault()).format(selectedTime)
+                                            "✔ Scheduled: $formatted"
+                                        }
+                                        else -> "✘ Rejected: Contact them for a new time"
+                                    }
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Failed to set time", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+                    }
+                }
+
+                else -> {
+                    text = "Waiting"
+                    setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                    isEnabled = false
+                }
             }
         }
 
