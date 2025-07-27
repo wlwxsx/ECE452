@@ -11,4 +11,7 @@
     <string name="click_to_login">click_to_login</string>
     <string name="click_to_register">click_to_register</string>
     <string name="logout">logout</string>
+    <string name="schedule">SCHEDULE</string>
+    <string name="scheduled">SCHEDULED</string>
+    <string name="wait_for_confirm">CONFIRMING</string>
 </resources>
