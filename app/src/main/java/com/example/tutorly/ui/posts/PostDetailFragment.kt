@@ -83,6 +83,31 @@ class PostDetailFragment : Fragment() {
         fetchPostDetails()
     }
 
+
+    private fun showScheduleInfoPopup() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_match_schedule_info, null)
+
+        val popup = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // "Got it" button redirects to NotificationsFragment
+        dialogView.findViewById<Button>(R.id.btn_got_it).setOnClickListener {
+            popup.dismiss()
+            findNavController().navigate(R.id.notifications)
+        }
+
+        // "X" button just closes the popup
+        dialogView.findViewById<ImageButton>(R.id.btn_close).setOnClickListener {
+            popup.dismiss()
+        }
+
+        popup.show()
+    }
+
     private fun setupDeletePostButton() {
         deletePostButton.setOnClickListener {
             showDeletePostConfirmation()
@@ -91,28 +116,28 @@ class PostDetailFragment : Fragment() {
 
     private fun showDeletePostConfirmation() {
         val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_delete_confirmation, null)
-        
+
         //Update the popup text for post deletion
         val linearLayout = popupView as android.widget.LinearLayout
         (linearLayout.getChildAt(0) as? TextView)?.text = "Delete Post"
         (linearLayout.getChildAt(1) as? TextView)?.text = "I understand that this action cannot be undone and this post will be permanently deleted."
-        
+
         val popup = AlertDialog.Builder(requireContext())
             .setView(popupView)
             .create()
-        
+
         popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
+
         //button onclick listeners
         popupView.findViewById<Button>(R.id.btn_cancel).setOnClickListener {
             popup.dismiss()
         }
-        
+
         popupView.findViewById<Button>(R.id.btn_delete).setOnClickListener {
             popup.dismiss()
             deletePost()
         }
-        
+
         popup.show()
     }
 
@@ -127,12 +152,12 @@ class PostDetailFragment : Fragment() {
             .get()
             .addOnSuccessListener { commentSnapshots ->
                 val batch = db.batch()
-                
+
                 //add all comments to the batch for deletion
                 for (document in commentSnapshots.documents) {
                     batch.delete(document.reference)
                 }
-                
+
                 batch.commit()
                     .addOnSuccessListener {
                         db.collection("posts").document(postId)
@@ -163,7 +188,7 @@ class PostDetailFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 val isContentNotEmpty = s?.toString()?.trim()?.isNotEmpty() == true
                 postCommentButton.isEnabled = isContentNotEmpty
-                
+
                 // Update button color based on content
                 if (isContentNotEmpty) {
                     postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
@@ -183,9 +208,9 @@ class PostDetailFragment : Fragment() {
     private fun setupCommentsRecyclerView() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         commentAdapter = CommentAdapter(
-            commentsList, 
-            userRepository, 
-            currentUserId, 
+            commentsList,
+            userRepository,
+            currentUserId,
             currentPost?.posterId,
             currentPost?.status,
             ::onMatchButtonClick
@@ -214,7 +239,7 @@ class PostDetailFragment : Fragment() {
             "matchedId" to matchedUserId,
             "status" to Post.STATUS_MATCHED
         )
-        
+
         db.collection("posts").document(postId!!)
             .update(updates)
             .addOnSuccessListener {
@@ -225,6 +250,7 @@ class PostDetailFragment : Fragment() {
                 commentAdapter.notifyDataSetChanged()
                 // Refresh the post to show updated UI
                 fetchPostDetails()
+                showScheduleInfoPopup()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(context, "Error matching with user: ${exception.message}", Toast.LENGTH_LONG).show()
@@ -247,7 +273,7 @@ class PostDetailFragment : Fragment() {
         val updates = hashMapOf<String, Any>(
             "status" to Post.STATUS_CLOSED
         )
-        
+
         db.collection("posts").document(postId!!)
             .update(updates)
             .addOnSuccessListener {
@@ -279,7 +305,7 @@ class PostDetailFragment : Fragment() {
             Toast.makeText(context, "You must be logged in to comment.", Toast.LENGTH_SHORT).show()
             return
         }
-        
+
         // Create comment data with proper server timestamp
         val commentData = hashMapOf(
             "content" to content,
@@ -291,7 +317,7 @@ class PostDetailFragment : Fragment() {
         // Disable button while posting
         postCommentButton.isEnabled = false
         postCommentButton.text = "POSTING..."
-        
+
         db.collection("comments")
             .add(commentData)
             .addOnSuccessListener { documentReference ->
@@ -300,7 +326,7 @@ class PostDetailFragment : Fragment() {
                 postCommentButton.text = "POST"
                 postCommentButton.isEnabled = false
                 postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
-                
+
                 // Refresh comments after posting
                 fetchComments()
             }
@@ -324,7 +350,7 @@ class PostDetailFragment : Fragment() {
                 if (document != null && document.exists()) {
                     val post = document.toObject(Post::class.java)
                     currentPost = post
-                    
+
                     // check if current user posted this post
                     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
                     if (currentUserId != null && post?.posterId == currentUserId) {
@@ -336,14 +362,14 @@ class PostDetailFragment : Fragment() {
                         deletePostButton.visibility = View.GONE
                         reportUserButton.visibility = View.VISIBLE
                     }
-                    
+
                     view?.let { view ->
                         view.findViewById<TextView>(R.id.post_number_header).text = "POST #${document.id.take(6).uppercase()}"
                         view.findViewById<TextView>(R.id.post_title).text = post?.title
                         view.findViewById<TextView>(R.id.post_message).text = post?.message
                         val sdf = SimpleDateFormat("MM/dd/yyyy - h:mm a", Locale.getDefault())
                         view.findViewById<TextView>(R.id.post_timestamp).text = "Posted ${post?.timeStamp?.let { sdf.format(it) } ?: "Unknown"}"
-                        
+
                         // Show closed badge if post is closed
                         val closedBadge = view.findViewById<TextView>(R.id.closed_badge)
                         if (post?.status == Post.STATUS_CLOSED) {
@@ -351,7 +377,7 @@ class PostDetailFragment : Fragment() {
                         } else {
                             closedBadge.visibility = View.GONE
                         }
-                        
+
                         // Handle report user button and close post button visibility
                         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
                         val isPostOwner = currentUserId == post?.posterId
@@ -385,7 +411,7 @@ class PostDetailFragment : Fragment() {
                             params.marginEnd = 20
                             authorInfoTextView.layoutParams = params
                         }
-                        
+
                         // Fetch and display post author name
                         if (post?.posterId?.isNotBlank() == true) {
                             authorInfoTextView.text = "Posted by: Loading..."
@@ -418,7 +444,7 @@ class PostDetailFragment : Fragment() {
                             authorInfoTextView.text = "Posted by: Anonymous"
                         }
                     }
-                    
+
                     // Update adapter with post owner information after post is loaded
                     setupCommentsRecyclerView()
                     fetchComments() // Fetch comments after post details are loaded
@@ -457,20 +483,20 @@ class PostDetailFragment : Fragment() {
                             commentsList.add(commentData)
                         }
                     }
-                    
+
                     // Sort comments by timestamp manually (oldest first)
                     commentsList.sortBy { commentData ->
                         val timestamp = commentData["timeStamp"] as? com.google.firebase.Timestamp
                         timestamp?.toDate()?.time ?: 0L
                     }
-                    
+
                     // Show/hide comments section header based on whether there are comments
                     if (commentsList.isEmpty()) {
                         commentsLabel.visibility = View.GONE
                     } else {
                         commentsLabel.visibility = View.VISIBLE
                     }
-                    
+
                     // Notify adapter that data has changed
                     commentAdapter.notifyDataSetChanged()
                 }
@@ -482,4 +508,4 @@ class PostDetailFragment : Fragment() {
         // Clean up the Firebase listener to prevent memory leaks
         commentsListener?.remove()
     }
-} 
+}
