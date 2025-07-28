@@ -102,6 +102,11 @@ class ProfilePreviewFragment : DialogFragment() {
                                 likeButton.alpha = 1.0f
                             }
                             isProfileBanned = user.isBanned
+                            
+                            // Update UI with correct ban status
+                            if (isCurrentUserAdmin) {
+                                setupUI(profileReport, isCurrentUserAdmin)
+                            }
                         } else {
                             profileName.text = "User not found"
                         }
@@ -224,11 +229,8 @@ class ProfilePreviewFragment : DialogFragment() {
         val reason = popupView.findViewById<EditText>(R.id.ban_reason)
         val banButton = popupView.findViewById<Button>(R.id.btn_ban)
         val cancelButton = popupView.findViewById<Button>(R.id.btn_cancel)
-        val popup = AlertDialog.Builder(context)
-            .setView(popupView)
-            .create()
-        popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        cancelButton.setOnClickListener { popup.dismiss() }
+        val dialogTitle = popupView.findViewById<TextView>(R.id.ban_dialog_title)
+        val dialogMessage = popupView.findViewById<TextView>(R.id.ban_dialog_message)
         
         // Always fetch the latest ban status from server to ensure correct popup text
         CoroutineScope(Dispatchers.IO).launch {
@@ -238,8 +240,17 @@ class ProfilePreviewFragment : DialogFragment() {
             withContext(Dispatchers.Main) {
                 if (isCurrentlyBanned) {
                     // User is banned, show unban dialog
+                    dialogTitle.text = "Unban User"
+                    dialogMessage.text = "Are you sure you want to unban this user?"
                     banButton.text = "Unban User"
                     reason.visibility = View.GONE
+                    reason.hint = ""
+                    
+                    val popup = AlertDialog.Builder(context)
+                        .setView(popupView)
+                        .create()
+                    popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    cancelButton.setOnClickListener { popup.dismiss() }
                     banButton.setOnClickListener {
                         CoroutineScope(Dispatchers.IO).launch {
                             val result = userRepository.unbanUser(reportedUserId, reporterUserId)
@@ -255,10 +266,20 @@ class ProfilePreviewFragment : DialogFragment() {
                             }
                         }
                     }
+                    popup.show()
                 } else {
                     // User is not banned, show ban dialog
+                    dialogTitle.text = "Ban User"
+                    dialogMessage.text = "Please provide a reason for banning this user:"
                     banButton.text = "Ban User"
                     reason.visibility = View.VISIBLE
+                    reason.hint = "Enter ban reason..."
+                    
+                    val popup = AlertDialog.Builder(context)
+                        .setView(popupView)
+                        .create()
+                    popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                    cancelButton.setOnClickListener { popup.dismiss() }
                     banButton.setOnClickListener {
                         val banReason = reason.text.toString().trim()
                         if (banReason.isNotEmpty()) {
@@ -266,8 +287,8 @@ class ProfilePreviewFragment : DialogFragment() {
                             popup.dismiss()
                         } else Toast.makeText(context, "Please provide a reason for the ban.", Toast.LENGTH_SHORT).show()
                     }
+                    popup.show()
                 }
-                popup.show()
             }
         }
     }

@@ -174,9 +174,8 @@ class NotificationsFragment : Fragment() {
         val reason = popupView.findViewById<EditText>(R.id.ban_reason)
         val banButton = popupView.findViewById<Button>(R.id.btn_ban)
         val cancelButton = popupView.findViewById<Button>(R.id.btn_cancel)
-        
-        // Pre-fill the reason with report details
-        reason.setText("Reported for: ${report.details}")
+        val dialogTitle = popupView.findViewById<TextView>(R.id.ban_dialog_title)
+        val dialogMessage = popupView.findViewById<TextView>(R.id.ban_dialog_message)
         
         val popup = AlertDialog.Builder(requireContext())
             .setView(popupView)
@@ -185,14 +184,24 @@ class NotificationsFragment : Fragment() {
         
         cancelButton.setOnClickListener { popup.dismiss() }
         if (report.isBanned) {
+            // User is banned, show unban dialog
+            dialogTitle.text = "Unban User"
+            dialogMessage.text = "Are you sure you want to unban this user?"
             banButton.text = "Unban User"
             reason.visibility = View.GONE
+            reason.hint = ""
             banButton.setOnClickListener {
                 unbanUser(report.reportedUserId, popup)
             }
         } else {
+            // User is not banned, show ban dialog
+            dialogTitle.text = "Ban User"
+            dialogMessage.text = "Please provide a reason for banning this user:"
             banButton.text = "Ban User"
             reason.visibility = View.VISIBLE
+            reason.hint = "Enter ban reason..."
+            // Pre-fill the reason with report details
+            reason.setText("Reported for: ${report.details}")
             banButton.setOnClickListener {
                 val banReason = reason.text.toString().trim()
                 if (banReason.isNotEmpty()) {
@@ -214,7 +223,14 @@ class NotificationsFragment : Fragment() {
             if (result.isSuccess) {
                 popup.dismiss()
                 Toast.makeText(requireContext(), "User banned successfully", Toast.LENGTH_SHORT).show()
-                fetchReports() // Refresh the reports list
+                // Remove all reports for this user from the list
+                reportList.removeAll { it.reportedUserId == userId }
+                reportAdapter.notifyDataSetChanged()
+                
+                // Update the header text
+                if (isAdded && _binding != null) {
+                    _binding?.textNotifications?.text = if (reportList.isEmpty()) "No reports yet." else "REPORTS"
+                }
             } else {
                 Toast.makeText(requireContext(), "Failed to ban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
             }
@@ -229,7 +245,14 @@ class NotificationsFragment : Fragment() {
             if (result.isSuccess) {
                 popup.dismiss()
                 Toast.makeText(requireContext(), "User unbanned successfully", Toast.LENGTH_SHORT).show()
-                fetchReports() // Refresh the reports list
+                // Remove all reports for this user from the list
+                reportList.removeAll { it.reportedUserId == userId }
+                reportAdapter.notifyDataSetChanged()
+                
+                // Update the header text
+                if (isAdded && _binding != null) {
+                    _binding?.textNotifications?.text = if (reportList.isEmpty()) "No reports yet." else "REPORTS"
+                }
             } else {
                 Toast.makeText(requireContext(), "Failed to unban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
             }
