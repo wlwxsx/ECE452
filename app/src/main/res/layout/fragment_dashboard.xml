@@ -41,6 +41,38 @@
             android:backgroundTint="@null"
             style="?android:attr/borderlessButtonStyle" />
 
+        <EditText
+            android:id="@+id/user_id_input"
+            android:layout_width="120dp"
+            android:layout_height="28dp"
+            android:layout_toEndOf="@id/my_posts_button"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/edit_text_background"
+            android:hint="User ID"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:backgroundTint="@null"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/filter_user_id_button"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_toEndOf="@id/user_id_input"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/edit_text_background"
+            android:text="Filter by User ID"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="1dp"
+            android:backgroundTint="@null"
+            android:visibility="gone" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

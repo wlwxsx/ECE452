@@ -113,7 +113,17 @@ class Register : AppCompatActivity() {
                     }
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    val errorMessage = "Registration failed. Please check your credentials and try again."
+                    val errorMessage = when {
+                        task.exception?.message?.contains("UNAUTHENTICATED") == true -> 
+                            "Authentication service unavailable. Please check your internet connection and try again."
+                        task.exception?.message?.contains("network") == true -> 
+                            "Network error. Please check your internet connection and try again."
+                        task.exception?.message?.contains("blocked") == true -> 
+                            "Authentication service temporarily unavailable. Please try again later."
+                        task.exception?.message?.contains("already in use") == true -> 
+                            "This email is already registered. Please use a different email or try logging in."
+                        else -> "Registration failed. Please check your credentials and try again."
+                    }
                     Toast.makeText(
                         baseContext,
                         errorMessage,

@@ -51,6 +51,22 @@
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_color_edit_24dp" />
 
+            <!-- Admin Badge -->
+            <TextView
+                android:id="@+id/admin_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="ADMIN"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:padding="6dp"
+                android:background="#FFD700"
+                android:textColor="#000000"
+                android:visibility="gone" />
+
         </FrameLayout>
 
         <!-- Name Field -->

@@ -28,6 +28,8 @@ import com.example.tutorly.utils.CourseCodeLoader
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
@@ -40,6 +42,10 @@ class DashboardFragment : Fragment() {
     private lateinit var postsList: ArrayList<Post>
     private lateinit var postAdapter: PostAdapter
     private lateinit var myPostsButton: Button
+    private lateinit var userIdInput: EditText
+    private lateinit var filterUserIdButton: Button
+    private var isCurrentUserAdmin: Boolean = false
+    private var filterByUserId: String? = null
 
     private var currentSubject: String? = null
     private var currentCourseCode: String? = null
@@ -68,12 +74,30 @@ class DashboardFragment : Fragment() {
         }
 
         myPostsButton = binding.myPostsButton
-        myPostsButton.setOnClickListener {
-            toggleMyPosts()
+        // Remove userIdInput and filterUserIdButton from header
+        myPostsButton.visibility = View.GONE
+
+        // Check admin status and show appropriate controls
+        val currentUserId = auth.currentUser?.uid
+        if (currentUserId != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val isAdmin = com.example.tutorly.UserRepository.getInstance().isUserAdmin(currentUserId).getOrNull() == true
+                isCurrentUserAdmin = isAdmin
+                if (!isAdmin) {
+                    myPostsButton.visibility = View.VISIBLE
+                    myPostsButton.setOnClickListener {
+                        toggleMyPosts()
+                    }
+                    updateMyPostsButtonAppearance()
+                }
+            }
+        } else {
+            myPostsButton.visibility = View.VISIBLE
+            myPostsButton.setOnClickListener {
+                toggleMyPosts()
+            }
+            updateMyPostsButtonAppearance()
         }
-        
-        // Set initial button appearance
-        updateMyPostsButtonAppearance()
 
         postsRecyclerView = binding.postsRecyclerView
         postsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -116,6 +140,15 @@ class DashboardFragment : Fragment() {
         val subjectAutoComplete = dialogView.findViewById<AutoCompleteTextView>(R.id.subject_filter_autocomplete)
         val courseCodeSpinner = dialogView.findViewById<Spinner>(R.id.course_code_filter_spinner)
         val helpTypeRadioGroup = dialogView.findViewById<RadioGroup>(R.id.help_type_radio_group)
+        val userIdFilterInput = dialogView.findViewById<EditText>(R.id.user_id_filter_input)
+
+        // Show user ID filter only for admins
+        if (isCurrentUserAdmin) {
+            userIdFilterInput.visibility = View.VISIBLE
+            userIdFilterInput.setText(filterByUserId ?: "")
+        } else {
+            userIdFilterInput.visibility = View.GONE
+        }
 
         // Load course codes from JSON
         val courseCodes = CourseCodeLoader.loadCourseCodes(requireContext())
@@ -234,7 +267,10 @@ class DashboardFragment : Fragment() {
                 "Requesting" -> "requesting"
                 else -> null
             }
-            
+
+            // Get user ID filter for admins
+            filterByUserId = if (isCurrentUserAdmin) userIdFilterInput.text.toString().trim().ifEmpty { null } else null
+            showMyPostsOnly = false // disable my posts filter if using user ID
             fetchPosts()
             alertDialog.dismiss()
         }
@@ -243,6 +279,7 @@ class DashboardFragment : Fragment() {
             currentSubject = null
             currentCourseCode = null
             currentHelpType = null
+            filterByUserId = null
             showMyPostsOnly = false
             updateMyPostsButtonAppearance()
             fetchPosts()
@@ -254,8 +291,10 @@ class DashboardFragment : Fragment() {
         var query: Query = db.collection("posts")
         val filterCount = listOf(currentSubject, currentCourseCode, currentHelpType).count { !it.isNullOrEmpty() }
 
-        // Add filter for current user's posts if "My Posts" is active
-        if (showMyPostsOnly) {
+        // Admin: filter by entered user ID
+        if (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty()) {
+            query = query.whereEqualTo("posterId", filterByUserId)
+        } else if (showMyPostsOnly) {
             val currentUserId = auth.currentUser?.uid
             if (currentUserId != null) {
                 query = query.whereEqualTo("posterId", currentUserId)
@@ -279,7 +318,7 @@ class DashboardFragment : Fragment() {
             query = query.whereEqualTo("role", currentHelpType)
         }
 
-        val totalFilterCount = filterCount + if (showMyPostsOnly) 1 else 0
+        val totalFilterCount = filterCount + if (showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) 1 else 0
         if (totalFilterCount != 1) {
             query = query.orderBy("timeStamp", Query.Direction.DESCENDING)
         }
@@ -315,14 +354,14 @@ class DashboardFragment : Fragment() {
                     
                     postAdapter.notifyDataSetChanged()
                     
-                    if (showMyPostsOnly && postsList.isEmpty()) {
-                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    if ((showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) && postsList.isEmpty()) {
+                        Toast.makeText(context, "No posts found for this user.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     postsList.clear()
                     postAdapter.notifyDataSetChanged()
-                    if (showMyPostsOnly) {
-                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    if (showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) {
+                        Toast.makeText(context, "No posts found for this user.", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(context, "No posts found.", Toast.LENGTH_SHORT).show()
                     }

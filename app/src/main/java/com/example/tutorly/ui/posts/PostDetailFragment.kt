@@ -85,6 +85,45 @@ class PostDetailFragment : Fragment() {
         deletePostButton.setOnClickListener {
             showDeletePostConfirmation()
         }
+        
+        // Add a test navigation button for debugging (remove this later)
+        deletePostButton.setOnLongClickListener {
+            android.util.Log.d("PostDetail", "Testing navigation...")
+            try {
+                if (findNavController().currentBackStackEntry != null) {
+                    android.util.Log.d("PostDetail", "Test: Using popBackStack()")
+                    findNavController().popBackStack()
+                } else {
+                    android.util.Log.d("PostDetail", "Test: Using navigate(R.id.forum)")
+                    findNavController().navigate(R.id.forum)
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("PostDetail", "Test navigation failed", e)
+                activity?.let { activity ->
+                    androidx.navigation.Navigation.findNavController(activity, R.id.nav_host_fragment_activity_main)
+                        .navigate(R.id.forum)
+                }
+            }
+            true // Consume the long press
+        }
+    }
+
+    private fun checkDeleteButtonVisibility() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val isAdmin = userRepository.isUserAdmin(currentUserId).getOrNull() ?: false
+                val isPostOwner = currentPost?.posterId == currentUserId
+                
+                withContext(Dispatchers.Main) {
+                    if (isAdmin || isPostOwner) {
+                        deletePostButton.visibility = View.VISIBLE
+                    } else {
+                        deletePostButton.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     private fun showDeletePostConfirmation() {
@@ -118,38 +157,70 @@ class PostDetailFragment : Fragment() {
         val postId = postId ?: return
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        if (currentPost?.posterId != currentUserId) return
-
-        db.collection("comments")
-            .whereEqualTo("postId", postId)
-            .get()
-            .addOnSuccessListener { commentSnapshots ->
-                val batch = db.batch()
-                
-                //add all comments to the batch for deletion
-                for (document in commentSnapshots.documents) {
-                    batch.delete(document.reference)
+        // Check if user is admin or post owner
+        CoroutineScope(Dispatchers.IO).launch {
+            val isAdmin = userRepository.isUserAdmin(currentUserId).getOrNull() ?: false
+            val isPostOwner = currentPost?.posterId == currentUserId
+            
+            if (!isAdmin && !isPostOwner) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Only the post owner or admins can delete posts", Toast.LENGTH_SHORT).show()
                 }
-                
-                batch.commit()
-                    .addOnSuccessListener {
-                        db.collection("posts").document(postId)
-                            .delete()
+                return@launch
+            }
+
+            withContext(Dispatchers.Main) {
+                // Proceed with deletion
+                db.collection("comments")
+                    .whereEqualTo("postId", postId)
+                    .get()
+                    .addOnSuccessListener { commentSnapshots ->
+                        val batch = db.batch()
+                        
+                        //add all comments to the batch for deletion
+                        for (document in commentSnapshots.documents) {
+                            batch.delete(document.reference)
+                        }
+                        
+                        batch.commit()
                             .addOnSuccessListener {
-                                Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
-                                findNavController().navigateUp()
+                                db.collection("posts").document(postId)
+                                    .delete()
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
+                                        // Navigate back to the previous screen in the stack
+                                        android.util.Log.d("PostDetail", "Attempting to navigate back after post deletion")
+                                        try {
+                                            if (findNavController().currentBackStackEntry != null) {
+                                                android.util.Log.d("PostDetail", "Using popBackStack()")
+                                                findNavController().popBackStack()
+                                            } else {
+                                                // Fallback: navigate to forum if popBackStack fails
+                                                android.util.Log.d("PostDetail", "Using navigate(R.id.forum)")
+                                                findNavController().navigate(R.id.forum)
+                                            }
+                                        } catch (e: Exception) {
+                                            android.util.Log.e("PostDetail", "Navigation failed", e)
+                                            // Final fallback: try to navigate using activity
+                                            activity?.let { activity ->
+                                                androidx.navigation.Navigation.findNavController(activity, R.id.nav_host_fragment_activity_main)
+                                                    .navigate(R.id.forum)
+                                            }
+                                        }
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
+                                    }
                             }
                             .addOnFailureListener {
-                                Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Failed to delete comments", Toast.LENGTH_SHORT).show()
                             }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(context, "Failed to delete comments", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
                     }
             }
-            .addOnFailureListener {
-                Toast.makeText(context, "Failed to delete post", Toast.LENGTH_SHORT).show()
-            }
+        }
     }
 
     private fun setupCommentInput() {
@@ -179,6 +250,9 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setupCommentsRecyclerView() {
+        // Check if fragment is still attached and has a valid fragment manager
+        if (!isAdded || parentFragmentManager == null) return
+        
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         commentAdapter = CommentAdapter(
             commentsList, 
@@ -412,14 +486,20 @@ class PostDetailFragment : Fragment() {
                     }
                     
                     // Update adapter with post owner information after post is loaded
-                    setupCommentsRecyclerView()
-                    fetchComments() // Fetch comments after post details are loaded
+                    // Check if fragment is still attached before updating UI
+                    if (isAdded && parentFragmentManager != null) {
+                        setupCommentsRecyclerView()
+                        fetchComments() // Fetch comments after post details are loaded
+                        checkDeleteButtonVisibility() // Check if delete button should be shown
+                    }
                 } else {
                     Toast.makeText(context, "Post not found.", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(context, "Error getting post details: ${exception.message}", Toast.LENGTH_LONG).show()
+                if (isAdded) {
+                    Toast.makeText(context, "Error getting post details: ${exception.message}", Toast.LENGTH_LONG).show()
+                }
             }
     }
 
@@ -433,6 +513,9 @@ class PostDetailFragment : Fragment() {
         commentsListener = db.collection("comments")
             .whereEqualTo("postId", postId!!)
             .addSnapshotListener { snapshots, error ->
+                // Check if fragment is still attached before processing updates
+                if (!isAdded) return@addSnapshotListener
+                
                 if (error != null) {
                     Toast.makeText(context, "Error fetching comments: ${error.message}", Toast.LENGTH_LONG).show()
                     return@addSnapshotListener

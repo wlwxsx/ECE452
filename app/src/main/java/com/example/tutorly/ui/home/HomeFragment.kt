@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.CoroutineScope
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -86,6 +87,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadUserProfileData()
+        checkAdminStatus()
         homeViewModel.name.observe(viewLifecycleOwner) { nameString -> binding.textProfileName.setText(nameString) }
         binding.logout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
@@ -109,6 +111,14 @@ class HomeFragment : Fragment() {
                         _binding?.textProfileName?.setText(documentSnapshot.getString("name"))
                         _binding?.textProfilePronouns?.setText(documentSnapshot.getString("pronouns"))
                         _binding?.textProfileBio?.setText(documentSnapshot.getString("bio"))
+                        
+                        // Check and display admin status
+                        val isAdmin = documentSnapshot.getBoolean("isAdmin") ?: false
+                        if (isAdmin) {
+                            _binding?.adminBadge?.visibility = View.VISIBLE
+                        } else {
+                            _binding?.adminBadge?.visibility = View.GONE
+                        }
                     } else { 
                         Toast.makeText(context, "No profile created yet. Please save.", Toast.LENGTH_SHORT).show() 
                     }
@@ -232,6 +242,25 @@ class HomeFragment : Fragment() {
             setStroke(12, Color.WHITE)
         }
         profileTextView.background = newDrawable
+    }
+
+    private fun checkAdminStatus() {
+        val currentUser: FirebaseUser? = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            CoroutineScope(Dispatchers.IO).launch {
+                val isAdmin = userRepository.isUserAdmin(userId).getOrNull() ?: false
+                withContext(Dispatchers.Main) {
+                    if (isAdded && _binding != null) {
+                        if (isAdmin) {
+                            _binding?.adminBadge?.visibility = View.VISIBLE
+                        } else {
+                            _binding?.adminBadge?.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -14,6 +14,11 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.example.tutorly.UserRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Login : AppCompatActivity() {
     
@@ -69,23 +74,7 @@ class Login : AppCompatActivity() {
                 return@setOnClickListener
             }
             //firebase login, success and fails
-            auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this@Login) { task ->
-                    if (task.isSuccessful) {
-                        Log.d(TAG, "signInWithEmail:success")
-                        val user = auth.currentUser
-                        updateUI(user)
-                    } else {
-                        Log.w(TAG, "signInWithEmail:failure", task.exception)
-                        val errorMessage = "Login failed. Please check your credentials and try again."
-                        Toast.makeText(
-                            baseContext,
-                            errorMessage,
-                            Toast.LENGTH_LONG,
-                        ).show()
-                        updateUI(null)
-                    }
-                }
+            signInWithEmailAndPassword(email, password)
         }
         
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -95,6 +84,36 @@ class Login : AppCompatActivity() {
         }
     }
 
+    private fun signInWithEmailAndPassword(email: String, password: String) {
+        // Clear user cache before login
+        UserRepository.getInstance().clearCache()
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, check if user is banned
+                    val user = auth.currentUser
+                    checkUserBanStatus(user)
+                } else {
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    val errorMessage = when {
+                        task.exception?.message?.contains("UNAUTHENTICATED") == true -> 
+                            "Authentication service unavailable. Please check your internet connection and try again."
+                        task.exception?.message?.contains("network") == true -> 
+                            "Network error. Please check your internet connection and try again."
+                        task.exception?.message?.contains("blocked") == true -> 
+                            "Authentication service temporarily unavailable. Please try again later."
+                        else -> "Login failed. Please check your credentials and try again."
+                    }
+                    Toast.makeText(
+                        baseContext,
+                        errorMessage,
+                        Toast.LENGTH_LONG,
+                    ).show()
+                    updateUI(null)
+                }
+            }
+    }
+
     //navigate to main activity after login, will not switch page on failed logins
     private fun updateUI(user: FirebaseUser?) {
         if (user != null) {
@@ -102,6 +121,26 @@ class Login : AppCompatActivity() {
             navigateToMainActivity()
         }
     }
+
+    private fun checkUserBanStatus(user: FirebaseUser?) {
+        if (user == null) {
+            updateUI(null)
+            return
+        }
+        // Always fetch from server to get latest ban status
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = UserRepository.getInstance().getUserById(user.uid, forceServer = true)
+            val userObj = result.getOrNull()
+            if (userObj?.isBanned == true) {
+                auth.signOut()
+                Toast.makeText(this@Login, "Your account has been banned.", Toast.LENGTH_LONG).show()
+                updateUI(null)
+            } else {
+                updateUI(user)
+            }
+        }
+    }
+    
     private fun navigateToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
