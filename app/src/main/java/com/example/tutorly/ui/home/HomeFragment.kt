@@ -112,6 +112,10 @@ class HomeFragment : Fragment() {
                         _binding?.textProfilePronouns?.setText(documentSnapshot.getString("pronouns"))
                         _binding?.textProfileBio?.setText(documentSnapshot.getString("bio"))
                         
+                        // Load and display like count
+                        val likes = documentSnapshot.getLong("likes")?.toInt() ?: 0
+                        _binding?.likeCountText?.text = likes.toString()
+                        
                         // Check and display admin status
                         val isAdmin = documentSnapshot.getBoolean("isAdmin") ?: false
                         if (isAdmin) {
