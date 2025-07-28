@@ -16,7 +16,10 @@ data class Post(
     val status: String = "active", // Default status
     @ServerTimestamp
     val timeStamp: Date? = null,
-    val title: String = ""
+    val title: String = "",
+    val ownerScheduledTimes: List<Date>? = null,
+    val finalScheduledTime: Date? = null,
+    val isTimeRejected: Boolean? = null
 ) {
     companion object {
         const val STATUS_ACTIVE = "active"

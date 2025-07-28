@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_white_bg">
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_close_black"
+        android:contentDescription="Close" />
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="      You can now provide up to 5 available time slots by tapping the SCHEDULE button. The matched person can choose a time that works, or contact you if none fit."
+        android:textSize="16sp"
+        android:padding="8dp"
+        android:textColor="#000000" />
+
+    <Button
+        android:id="@+id/btn_got_it"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Go to Notifications"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#005A9C"
+        android:textColor="@android:color/white"/>
+</LinearLayout>
