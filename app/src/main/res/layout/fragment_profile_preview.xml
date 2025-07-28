@@ -119,4 +119,35 @@
         tools:layout_editor_absoluteX="-1dp"
         tools:layout_editor_absoluteY="-1dp"
         tools:text="J" />
+
+    <!-- Admin Badge -->
+    <TextView
+        android:id="@+id/admin_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADMIN"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:padding="4dp"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/text_profile_profile"
+        app:layout_constraintStart_toStartOf="@id/text_profile_profile"
+        app:layout_constraintEnd_toEndOf="@id/text_profile_profile" />
+
+    <!-- Banned Badge -->
+    <TextView
+        android:id="@+id/banned_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BANNED"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:padding="4dp"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/admin_badge"
+        app:layout_constraintStart_toStartOf="@id/text_profile_profile"
+        app:layout_constraintEnd_toEndOf="@id/text_profile_profile" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

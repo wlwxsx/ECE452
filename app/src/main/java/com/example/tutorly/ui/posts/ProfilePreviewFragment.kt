@@ -18,11 +18,14 @@ import android.graphics.Color
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfilePreviewFragment : DialogFragment() {
     private lateinit var userRepository: UserRepository
     private var reportedUserId: String? = null
     private var reporterUserId: String? = null
+    private var isCurrentUserAdmin: Boolean = false
+    private var isProfileBanned: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +47,12 @@ class ProfilePreviewFragment : DialogFragment() {
         val likeButton = view.findViewById<android.widget.ImageButton>(R.id.like_button)
         val likeCount = view.findViewById<TextView>(R.id.like_count)
 
-        profileReport.setOnClickListener { openReportDialog() }
+        // Check if current user is admin
+        checkAdminStatus { isAdmin ->
+            isCurrentUserAdmin = isAdmin
+            setupUI(profileReport, isAdmin)
+        }
+
         likeButton.setOnClickListener {
             if (userId != reporterUserId) {
                 handleLikeToggle(userId, reporterUserId, likeButton, likeCount)
@@ -52,6 +60,7 @@ class ProfilePreviewFragment : DialogFragment() {
                 Toast.makeText(context, "You cannot like yourself.", Toast.LENGTH_SHORT).show()
             }
         }
+        
         CoroutineScope(Dispatchers.IO).launch {
             userRepository.getUserById(userId)
                 .onSuccess { user ->
@@ -65,6 +74,25 @@ class ProfilePreviewFragment : DialogFragment() {
                             profileInitial.text = firstInitial
                             profileInitial.setBackgroundColor(Color.parseColor(user.profileColor))
                             likeCount.text = user.likes.toString()
+                            
+                            // Show admin badge if user is admin
+                            if (user.isAdmin) {
+                                val adminBadge = view.findViewById<TextView>(R.id.admin_badge)
+                                adminBadge?.visibility = View.VISIBLE
+                                adminBadge?.text = "ADMIN"
+                                adminBadge?.setBackgroundColor(Color.parseColor("#FFD700")) // Gold color
+                                adminBadge?.setTextColor(Color.BLACK)
+                            }
+                            
+                            // Show banned status if user is banned
+                            if (user.isBanned) {
+                                val bannedBadge = view.findViewById<TextView>(R.id.banned_badge)
+                                bannedBadge?.visibility = View.VISIBLE
+                                bannedBadge?.text = "BANNED"
+                                bannedBadge?.setBackgroundColor(Color.parseColor("#FF5722")) // Red color
+                                bannedBadge?.setTextColor(Color.WHITE)
+                            }
+                            
                             // Set like button icon based on liked state
                             if (reporterUserId != null && user.likedBy.contains(reporterUserId)) {
                                 likeButton.setImageResource(R.drawable.ic_like)
@@ -73,6 +101,7 @@ class ProfilePreviewFragment : DialogFragment() {
                                 likeButton.setImageResource(R.drawable.ic_like_outline)
                                 likeButton.alpha = 1.0f
                             }
+                            isProfileBanned = user.isBanned
                         } else {
                             profileName.text = "User not found"
                         }
@@ -83,6 +112,44 @@ class ProfilePreviewFragment : DialogFragment() {
                         profileName.text = "Error loading profile"
                     }
                 }
+        }
+    }
+
+    private fun checkAdminStatus(callback: (Boolean) -> Unit) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val isAdmin = userRepository.isUserAdmin(currentUserId).getOrNull() ?: false
+                withContext(Dispatchers.Main) {
+                    callback(isAdmin)
+                }
+            }
+        } else {
+            callback(false)
+        }
+    }
+
+    private fun setupUI(profileReport: Button, isAdmin: Boolean) {
+        if (isAdmin) {
+            profileReport.text = if (isProfileBanned) "Unban User" else "Ban User"
+            profileReport.setBackgroundColor(Color.parseColor("#FF5722")) // Red color for ban/unban
+            profileReport.setOnClickListener {
+                reportedUserId?.let { userId ->
+                    reporterUserId?.let { reporterId ->
+                        if (userId == reporterId) {
+                            Toast.makeText(context, "You cannot ban/unban yourself.", Toast.LENGTH_SHORT).show()
+                            return@setOnClickListener
+                        }
+                        context?.let { ctx ->
+                            showBanPopup(ctx, userId, reporterId)
+                        }
+                    }
+                }
+            }
+        } else {
+            profileReport.text = "Report User"
+            profileReport.setBackgroundColor(Color.parseColor("#FF9800")) // Orange color for report
+            profileReport.setOnClickListener { openReportDialog() }
         }
     }
 
@@ -136,6 +203,101 @@ class ProfilePreviewFragment : DialogFragment() {
                 popup.dismiss()
             }
             .addOnFailureListener { exception -> Toast.makeText(context, "Error submitting report: ${exception.message}", Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun openBanDialog() {
+        reportedUserId?.let { userId ->
+            reporterUserId?.let { reporterId ->
+                if (userId == reporterId) {
+                    Toast.makeText(context, "You cannot ban yourself.", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                context?.let { ctx ->
+                    showBanPopup(ctx, userId, reporterId)
+                }
+            }
+        }
+    }
+
+    private fun showBanPopup(context: Context, reportedUserId: String, reporterUserId: String) {
+        val popupView = LayoutInflater.from(context).inflate(R.layout.fragment_ban, null)
+        val reason = popupView.findViewById<EditText>(R.id.ban_reason)
+        val banButton = popupView.findViewById<Button>(R.id.btn_ban)
+        val cancelButton = popupView.findViewById<Button>(R.id.btn_cancel)
+        val popup = AlertDialog.Builder(context)
+            .setView(popupView)
+            .create()
+        popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        cancelButton.setOnClickListener { popup.dismiss() }
+        
+        if (isProfileBanned) {
+            // User is banned, show unban dialog
+            banButton.text = "Unban User"
+            reason.visibility = View.GONE
+            banButton.setOnClickListener {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result = userRepository.unbanUser(reportedUserId, reporterUserId)
+                    withContext(Dispatchers.Main) {
+                        if (result.isSuccess) {
+                            Toast.makeText(context, "User unbanned successfully", Toast.LENGTH_SHORT).show()
+                            popup.dismiss()
+                            // Refresh user data and UI after unban
+                            refreshProfileUIAfterBanChange(reportedUserId)
+                        } else {
+                            Toast.makeText(context, "Failed to unban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        } else {
+            // User is not banned, show ban dialog
+            banButton.text = "Ban User"
+            reason.visibility = View.VISIBLE
+            banButton.setOnClickListener {
+                val banReason = reason.text.toString().trim()
+                if (banReason.isNotEmpty()) {
+                    banUser(popup, reportedUserId, reporterUserId, banReason)
+                    popup.dismiss()
+                } else Toast.makeText(context, "Please provide a reason for the ban.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        popup.show()
+    }
+
+    private fun banUser(popup: AlertDialog, reportedUserId: String, reporterUserId: String, reason: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = userRepository.banUser(reportedUserId, reporterUserId)
+            withContext(Dispatchers.Main) {
+                if (result.isSuccess) {
+                    Toast.makeText(context, "User banned successfully", Toast.LENGTH_SHORT).show()
+                    popup.dismiss()
+                    dismiss() // Close the profile preview
+                } else {
+                    Toast.makeText(context, "Failed to ban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun refreshProfileUIAfterBanChange(userId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            userRepository.getUserById(userId, forceServer = true)
+                .onSuccess { user ->
+                    withContext(Dispatchers.Main) {
+                        if (user != null) {
+                            isProfileBanned = user.isBanned
+                            val profileReport = view?.findViewById<Button>(R.id.report_user_button)
+                            val bannedBadge = view?.findViewById<TextView>(R.id.banned_badge)
+                            setupUI(profileReport!!, isCurrentUserAdmin)
+                            if (user.isBanned) {
+                                bannedBadge?.visibility = View.VISIBLE
+                            } else {
+                                bannedBadge?.visibility = View.GONE
+                            }
+                        }
+                    }
+                }
+        }
     }
 
     private fun handleLikeToggle(userId: String?, reporterUserId: String?, likeButton: android.widget.ImageButton, likeCount: TextView) {

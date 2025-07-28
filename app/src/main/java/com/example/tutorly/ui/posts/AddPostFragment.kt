@@ -199,7 +199,25 @@ class AddPostFragment : Fragment() {
                 .add(post)
                 .addOnSuccessListener {
                     Toast.makeText(context, "Post successful!", Toast.LENGTH_SHORT).show()
-                    findNavController().navigateUp()
+                    // Navigate back to the previous screen in the stack
+                    android.util.Log.d("AddPost", "Attempting to navigate back after post creation")
+                    try {
+                        if (findNavController().currentBackStackEntry != null) {
+                            android.util.Log.d("AddPost", "Using popBackStack()")
+                            findNavController().popBackStack()
+                        } else {
+                            // Fallback: navigate to forum if popBackStack fails
+                            android.util.Log.d("AddPost", "Using navigate(R.id.forum)")
+                            findNavController().navigate(R.id.forum)
+                        }
+                    } catch (e: Exception) {
+                        android.util.Log.e("AddPost", "Navigation failed", e)
+                        // Final fallback: try to navigate using activity
+                        activity?.let { activity ->
+                            androidx.navigation.Navigation.findNavController(activity, R.id.nav_host_fragment_activity_main)
+                                .navigate(R.id.forum)
+                        }
+                    }
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(context, "Error saving post: ${e.message}", Toast.LENGTH_LONG).show()

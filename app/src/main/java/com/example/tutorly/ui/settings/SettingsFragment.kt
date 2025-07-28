@@ -1,12 +1,8 @@
 package com.example.tutorly.ui.settings
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils
+import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,25 +12,30 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.tutorly.Login
 import com.example.tutorly.R
+import com.example.tutorly.UserRepository
 import com.example.tutorly.utils.PasswordValidator
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SettingsFragment : Fragment() {
 
-    companion object {
-        private const val TAG = "SettingsFragment"
-    }
-
+    private var _binding: com.example.tutorly.databinding.FragmentSettingBinding? = null
+    private val binding get() = _binding!!
     private lateinit var settingsViewModel: SettingsViewModel
+    private val userRepository = UserRepository.getInstance()
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
     
-    //ui variables
+    // UI elements
     private lateinit var currentPasswordField: EditText
     private lateinit var newPasswordField: EditText
     private lateinit var confirmPasswordField: EditText
@@ -49,19 +50,27 @@ class SettingsFragment : Fragment() {
         settingsViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        _binding = com.example.tutorly.databinding.FragmentSettingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val root = inflater.inflate(R.layout.fragment_setting, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        setupUI()
+        checkAdminStatus()
+    }
 
-        initializeViews(root)
+    private fun setupUI() {
+        // Setup existing UI elements
+        initializeViews(binding.root)
         setupClickListeners()
         setupTextWatchers()
 
-        val textView: TextView = root.findViewById(R.id.text_setting)
+        val textView: TextView = binding.textSetting
         settingsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-        
-        return root
     }
 
     private fun initializeViews(root: View) {
@@ -78,151 +87,151 @@ class SettingsFragment : Fragment() {
         }
 
         deleteAccountButton.setOnClickListener {
-            showDeleteAccountConfirmation()
+            deleteAccount()
         }
     }
 
     private fun setupTextWatchers() {
-        val passwordWatcher = object : TextWatcher {
+        val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
-                val allFilled = currentPasswordField.text.isNotBlank()
-                        && newPasswordField.text.isNotBlank()
-                        && confirmPasswordField.text.isNotBlank()
-
-                changePasswordButton.isEnabled = allFilled
-                changePasswordButton.setBackgroundColor(
-                    if (allFilled) Color.parseColor("#4CAF50")
-                    else Color.parseColor("#CCCCCC")
-                )
+            override fun afterTextChanged(s: Editable?) {
+                updateChangePasswordButtonState()
             }
         }
 
-        //checking if password inputs are filled
-        currentPasswordField.addTextChangedListener(passwordWatcher)
-        newPasswordField.addTextChangedListener(passwordWatcher)
-        confirmPasswordField.addTextChangedListener(passwordWatcher)
+        currentPasswordField.addTextChangedListener(textWatcher)
+        newPasswordField.addTextChangedListener(textWatcher)
+        confirmPasswordField.addTextChangedListener(textWatcher)
+    }
 
-        //initial states and colors
-        changePasswordButton.isEnabled = false
-        changePasswordButton.setBackgroundColor(Color.parseColor("#CCCCCC"))
+    private fun updateChangePasswordButtonState() {
+        val currentPassword = currentPasswordField.text.toString()
+        val newPassword = newPasswordField.text.toString()
+        val confirmPassword = confirmPasswordField.text.toString()
+
+        val allFieldsFilled = currentPassword.isNotEmpty() && 
+                             newPassword.isNotEmpty() && 
+                             confirmPassword.isNotEmpty()
+
+        changePasswordButton.isEnabled = allFieldsFilled
+        changePasswordButton.setBackgroundTintList(
+            if (allFieldsFilled) 
+                androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
+            else 
+                androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
+        )
     }
 
     private fun changePassword() {
-        val currentPassword = currentPasswordField.text.toString().trim()
-        val newPassword = newPasswordField.text.toString().trim()  
-        val confirmPassword = confirmPasswordField.text.toString().trim()
+        val currentPassword = currentPasswordField.text.toString()
+        val newPassword = newPasswordField.text.toString()
+        val confirmPassword = confirmPasswordField.text.toString()
 
-        //check password
-        if (!PasswordValidator.validatePasswordChange(currentPassword, newPassword, confirmPassword, requireContext())) {
+        if (newPassword != confirmPassword) {
+            Toast.makeText(context, "New passwords do not match", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!PasswordValidator.isPasswordValid(newPassword, requireContext())) {
             return
         }
 
         val user = auth.currentUser
-        if (user == null) {
-            Toast.makeText(context, "User not authenticated", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        //reauthenticate user with current password
-        val email = user.email ?: ""
-        val credential = EmailAuthProvider.getCredential(email, currentPassword)
-
-        user.reauthenticate(credential)
-            .addOnCompleteListener { reauthTask ->
-                if (reauthTask.isSuccessful) {
-                    Log.d(TAG, "Re-authentication successful, proceeding with password update")
-                    user.updatePassword(newPassword)
-                        .addOnCompleteListener { updateTask ->
-                            if (updateTask.isSuccessful) {
-                                Log.d(TAG, "Password updated successfully")
-                                Log.d(TAG, "User still authenticated: ${auth.currentUser != null}")
-                                Toast.makeText(context, "Password changed successfully!", Toast.LENGTH_LONG).show()
-                                clearPasswordFields()
-                            } else {
-                                Log.e(TAG, "Failed to update password", updateTask.exception)
-                                Toast.makeText(context, "Failed to change password: ${updateTask.exception?.message}", Toast.LENGTH_LONG).show()
+        if (user != null) {
+            val credential = EmailAuthProvider.getCredential(user.email!!, currentPassword)
+            user.reauthenticate(credential)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        user.updatePassword(newPassword)
+                            .addOnCompleteListener { updateTask ->
+                                if (updateTask.isSuccessful) {
+                                    Toast.makeText(context, "Password changed successfully", Toast.LENGTH_SHORT).show()
+                                    clearPasswordFields()
+                                } else {
+                                    Toast.makeText(context, "Failed to change password", Toast.LENGTH_SHORT).show()
+                                }
                             }
-                        }
-                } else {
-                    Log.e(TAG, "Re-authentication failed", reauthTask.exception)
-                    Toast.makeText(context, "Current password is incorrect", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, "Current password is incorrect", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-    }
-
-    private fun clearPasswordFields() {
-        currentPasswordField.text?.clear()
-        newPasswordField.text?.clear()
-        confirmPasswordField.text?.clear()
-    }
-
-    private fun showDeleteAccountConfirmation() {
-        val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_delete_confirmation, null)
-        
-        val popup = AlertDialog.Builder(requireContext())
-            .setView(popupView)
-            .create()
-        
-        popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        
-        //button onclick listeners
-        popupView.findViewById<Button>(R.id.btn_cancel).setOnClickListener {
-            popup.dismiss()
         }
-        
-        popupView.findViewById<Button>(R.id.btn_delete).setOnClickListener {
-            popup.dismiss()
-            deleteAccount()
-        }
-        
-        popup.show()
     }
 
     private fun deleteAccount() {
         val user = auth.currentUser
-        if (user == null) {
-            Toast.makeText(context, "User not authenticated", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val userId = user.uid
-
-        //delete user data from Firestore
-        db.collection("users").document(userId)
-            .delete()
-            .addOnCompleteListener { firestoreTask ->
-                if (firestoreTask.isSuccessful) {
-                    Log.d(TAG, "User data deleted from Firestore")
-                    
-                    //delete the Firebase Auth account
-                    Log.d(TAG, "Attempting to delete Firebase Auth account for user: ${user.uid}")
+        if (user != null) {
+            // Delete user data from Firestore first
+            db.collection("users").document(user.uid)
+                .delete()
+                .addOnSuccessListener {
+                    // Then delete the Firebase Auth account
                     user.delete()
-                        .addOnCompleteListener { deleteTask ->
-                            if (deleteTask.isSuccessful) {
-                                Log.d(TAG, "Firebase Auth account deleted successfully for user: ${user.uid}")
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
                                 Toast.makeText(context, "Account deleted successfully", Toast.LENGTH_SHORT).show()
-                                // signing out and going back to login page
-                                auth.signOut()
                                 navigateToLogin()
                             } else {
-                                Log.e(TAG, "Failed to delete Firebase Auth account for user: ${user.uid}", deleteTask.exception)
-                                Log.e(TAG, "Error details: ${deleteTask.exception?.localizedMessage}")
-                                Toast.makeText(context, "Failed to delete account: ${deleteTask.exception?.message}", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Failed to delete account", Toast.LENGTH_SHORT).show()
                             }
                         }
-                } else {
-                    Log.e(TAG, "Failed to delete user data from Firestore", firestoreTask.exception)
-                    Toast.makeText(context, "Failed to delete user data: ${firestoreTask.exception?.message}", Toast.LENGTH_LONG).show()
                 }
-            }
+                .addOnFailureListener {
+                    Toast.makeText(context, "Failed to delete account data", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun clearPasswordFields() {
+        currentPasswordField.text.clear()
+        newPasswordField.text.clear()
+        confirmPasswordField.text.clear()
     }
 
     private fun navigateToLogin() {
-        val intent = Intent(requireContext(), Login::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = android.content.Intent(requireContext(), Login::class.java)
+        intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    private fun checkAdminStatus() {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserId != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                val isAdmin = userRepository.isUserAdmin(currentUserId).getOrNull() ?: false
+                withContext(Dispatchers.Main) {
+                    if (isAdmin) {
+                        showAdminButton()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showAdminButton() {
+        val adminButton = Button(requireContext()).apply {
+            text = "Admin Panel"
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.button_gray))
+            setTextColor(android.graphics.Color.WHITE)
+            setOnClickListener {
+                findNavController().navigate(R.id.action_navigation_settings_to_adminFragment)
+            }
+        }
+        
+        // Add admin button to the LinearLayout that contains the other buttons
+        val deleteAccountButton = binding.root.findViewById<Button>(R.id.btn_delete_account)
+        val parent = deleteAccountButton.parent as? ViewGroup
+        parent?.addView(adminButton)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 } 
