@@ -108,33 +108,56 @@
                     android:textColor="#FFFFFF" />
             </RadioGroup>
 
-            <EditText
-                android:id="@+id/subject_input"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/subject_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/edit_text_background"
-                android:hint="Subject: ECE"
-                android:padding="12dp"
-                android:textColor="#000000"
+                android:text="Subject"
+                android:textColor="#FFFFFF"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/course_code_input"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tutoring_type_label" />
 
-            <EditText
-                android:id="@+id/course_code_input"
+            <AutoCompleteTextView
+                android:id="@+id/subject_input"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:background="@drawable/edit_text_background"
-                android:hint="Course Code: 222"
+                android:hint="Type to search subjects..."
                 android:padding="12dp"
                 android:textColor="#000000"
                 android:textSize="16sp"
+                android:inputType="textCapCharacters"
+                app:layout_constraintEnd_toStartOf="@+id/course_code_input"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/subject_label" />
+
+            <TextView
+                android:id="@+id/course_code_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Course Code"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@id/subject_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tutoring_type_label" />
+
+            <Spinner
+                android:id="@+id/course_code_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/edit_text_background"
+                android:padding="12dp"
+                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/subject_input"
-                app:layout_constraintTop_toTopOf="@id/subject_input" />
+                app:layout_constraintTop_toBottomOf="@id/course_code_label" />
 
             <TextView
                 android:id="@+id/description_label"

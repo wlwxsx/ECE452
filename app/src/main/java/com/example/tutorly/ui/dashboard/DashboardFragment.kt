@@ -11,7 +11,12 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.AutoCompleteTextView
+import android.widget.Spinner
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,9 +24,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.databinding.FragmentDashboardBinding
 import com.example.tutorly.ui.posts.Post
+import com.example.tutorly.utils.CourseCodeLoader
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class DashboardFragment : Fragment() {
 
@@ -34,6 +42,10 @@ class DashboardFragment : Fragment() {
     private lateinit var postsList: ArrayList<Post>
     private lateinit var postAdapter: PostAdapter
     private lateinit var myPostsButton: Button
+    private lateinit var userIdInput: EditText
+    private lateinit var filterUserIdButton: Button
+    private var isCurrentUserAdmin: Boolean = false
+    private var filterByUserId: String? = null
 
     private var currentSubject: String? = null
     private var currentCourseCode: String? = null
@@ -62,12 +74,30 @@ class DashboardFragment : Fragment() {
         }
 
         myPostsButton = binding.myPostsButton
-        myPostsButton.setOnClickListener {
-            toggleMyPosts()
+        // Remove userIdInput and filterUserIdButton from header
+        myPostsButton.visibility = View.GONE
+
+        // Check admin status and show appropriate controls
+        val currentUserId = auth.currentUser?.uid
+        if (currentUserId != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val isAdmin = com.example.tutorly.UserRepository.getInstance().isUserAdmin(currentUserId).getOrNull() == true
+                isCurrentUserAdmin = isAdmin
+                if (!isAdmin) {
+                    myPostsButton.visibility = View.VISIBLE
+                    myPostsButton.setOnClickListener {
+                        toggleMyPosts()
+                    }
+                    updateMyPostsButtonAppearance()
+                }
+            }
+        } else {
+            myPostsButton.visibility = View.VISIBLE
+            myPostsButton.setOnClickListener {
+                toggleMyPosts()
+            }
+            updateMyPostsButtonAppearance()
         }
-        
-        // Set initial button appearance
-        updateMyPostsButtonAppearance()
 
         postsRecyclerView = binding.postsRecyclerView
         postsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -107,21 +137,129 @@ class DashboardFragment : Fragment() {
         
         val alertDialog = builder.show()
 
-        val subjectInput = dialogView.findViewById<EditText>(R.id.subject_filter_input)
-        val courseCodeInput = dialogView.findViewById<EditText>(R.id.course_code_filter_input)
+        val subjectAutoComplete = dialogView.findViewById<AutoCompleteTextView>(R.id.subject_filter_autocomplete)
+        val courseCodeSpinner = dialogView.findViewById<Spinner>(R.id.course_code_filter_spinner)
         val helpTypeRadioGroup = dialogView.findViewById<RadioGroup>(R.id.help_type_radio_group)
+        val userIdFilterInput = dialogView.findViewById<EditText>(R.id.user_id_filter_input)
 
-        subjectInput.setText(currentSubject)
-        courseCodeInput.setText(currentCourseCode)
+        // Show user ID filter only for admins
+        if (isCurrentUserAdmin) {
+            userIdFilterInput.visibility = View.VISIBLE
+            userIdFilterInput.setText(filterByUserId ?: "")
+        } else {
+            userIdFilterInput.visibility = View.GONE
+        }
+
+        // Load course codes from JSON
+        val courseCodes = CourseCodeLoader.loadCourseCodes(requireContext())
+        val subjects = CourseCodeLoader.getSubjects()
+        
+        // Setup subject AutoCompleteTextView with custom adapter
+        val subjectAdapter = object : ArrayAdapter<String>(requireContext(), android.R.layout.simple_dropdown_item_1line, subjects.toMutableList()) {
+            override fun getFilter(): android.widget.Filter {
+                return object : android.widget.Filter() {
+                    override fun performFiltering(constraint: CharSequence?): android.widget.Filter.FilterResults {
+                        val results = android.widget.Filter.FilterResults()
+                        val filteredList = mutableListOf<String>()
+                        
+                        if (constraint.isNullOrEmpty()) {
+                            // Show all subjects when field is empty
+                            filteredList.addAll(subjects)
+                        } else {
+                            // Filter subjects based on constraint (minimum 1 character)
+                            val filterPattern = constraint.toString().lowercase().trim()
+                            for (subject in subjects) {
+                                if (subject.lowercase().contains(filterPattern)) {
+                                    filteredList.add(subject)
+                                }
+                            }
+                        }
+                        
+                        results.values = filteredList
+                        results.count = filteredList.size
+                        return results
+                    }
+                    
+                    override fun publishResults(constraint: CharSequence?, results: android.widget.Filter.FilterResults?) {
+                        clear()
+                        if (results?.values != null) {
+                            addAll(results.values as List<String>)
+                        }
+                        notifyDataSetChanged()
+                    }
+                }
+            }
+        }
+        subjectAutoComplete.setAdapter(subjectAdapter)
+        
+        // Set threshold to 1 for minimum characters before filtering
+        subjectAutoComplete.threshold = 1
+
+        // Setup course code Spinner (initially disabled)
+        val courseCodeOptions = mutableListOf("Select Course Code")
+        val courseCodeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, courseCodeOptions)
+        courseCodeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        courseCodeSpinner.adapter = courseCodeAdapter
+
+        // Set current values
+        if (!currentSubject.isNullOrEmpty()) {
+            subjectAutoComplete.setText(currentSubject)
+            // Enable course code spinner and populate it
+            courseCodeSpinner.isEnabled = true
+            val courseCodesForSubject = CourseCodeLoader.getCourseCodesForSubject(currentSubject!!)
+            courseCodeOptions.clear()
+            courseCodeOptions.add("Select Course Code")
+            courseCodeOptions.addAll(courseCodesForSubject)
+            courseCodeAdapter.notifyDataSetChanged()
+            
+            // Set current course code
+            if (!currentCourseCode.isNullOrEmpty()) {
+                val courseCodePosition = courseCodeOptions.indexOf(currentCourseCode)
+                if (courseCodePosition >= 0) {
+                    courseCodeSpinner.setSelection(courseCodePosition)
+                }
+            }
+        }
+        
         when(currentHelpType) {
             "providing" -> helpTypeRadioGroup.check(R.id.offering_radio_filter)
             "requesting" -> helpTypeRadioGroup.check(R.id.requesting_radio_filter)
             else -> helpTypeRadioGroup.check(R.id.any_radio_filter)
         }
 
+        // Subject selection listener
+        subjectAutoComplete.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val selectedSubject = s.toString().trim()
+                if (selectedSubject.isNotEmpty() && subjects.contains(selectedSubject)) {
+                    // Enable course code spinner and populate it
+                    courseCodeSpinner.isEnabled = true
+                    val courseCodesForSubject = CourseCodeLoader.getCourseCodesForSubject(selectedSubject)
+                    courseCodeOptions.clear()
+                    courseCodeOptions.add("Select Course Code")
+                    courseCodeOptions.addAll(courseCodesForSubject)
+                    courseCodeAdapter.notifyDataSetChanged()
+                    courseCodeSpinner.setSelection(0) // Reset to "Select Course Code"
+                } else {
+                    // Disable course code spinner
+                    courseCodeSpinner.isEnabled = false
+                    courseCodeOptions.clear()
+                    courseCodeOptions.add("Select Course Code")
+                    courseCodeAdapter.notifyDataSetChanged()
+                    courseCodeSpinner.setSelection(0)
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         dialogView.findViewById<Button>(R.id.apply_filters_button).setOnClickListener {
-            currentSubject = subjectInput.text.toString().trim()
-            currentCourseCode = courseCodeInput.text.toString().trim()
+            val selectedSubject = subjectAutoComplete.text.toString().trim()
+            currentSubject = if (selectedSubject.isNotEmpty() && subjects.contains(selectedSubject)) selectedSubject else null
+            
+            val selectedCourseCode = courseCodeSpinner.selectedItem.toString()
+            currentCourseCode = if (selectedCourseCode != "Select Course Code") selectedCourseCode else null
+            
             val selectedHelpTypeId = helpTypeRadioGroup.checkedRadioButtonId
             val helpTypeRadioButton = dialogView.findViewById<RadioButton>(selectedHelpTypeId)
             currentHelpType = when (helpTypeRadioButton.text.toString()) {
@@ -129,7 +267,10 @@ class DashboardFragment : Fragment() {
                 "Requesting" -> "requesting"
                 else -> null
             }
-            
+
+            // Get user ID filter for admins
+            filterByUserId = if (isCurrentUserAdmin) userIdFilterInput.text.toString().trim().ifEmpty { null } else null
+            showMyPostsOnly = false // disable my posts filter if using user ID
             fetchPosts()
             alertDialog.dismiss()
         }
@@ -138,6 +279,7 @@ class DashboardFragment : Fragment() {
             currentSubject = null
             currentCourseCode = null
             currentHelpType = null
+            filterByUserId = null
             showMyPostsOnly = false
             updateMyPostsButtonAppearance()
             fetchPosts()
@@ -149,8 +291,10 @@ class DashboardFragment : Fragment() {
         var query: Query = db.collection("posts")
         val filterCount = listOf(currentSubject, currentCourseCode, currentHelpType).count { !it.isNullOrEmpty() }
 
-        // Add filter for current user's posts if "My Posts" is active
-        if (showMyPostsOnly) {
+        // Admin: filter by entered user ID
+        if (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty()) {
+            query = query.whereEqualTo("posterId", filterByUserId)
+        } else if (showMyPostsOnly) {
             val currentUserId = auth.currentUser?.uid
             if (currentUserId != null) {
                 query = query.whereEqualTo("posterId", currentUserId)
@@ -174,7 +318,7 @@ class DashboardFragment : Fragment() {
             query = query.whereEqualTo("role", currentHelpType)
         }
 
-        val totalFilterCount = filterCount + if (showMyPostsOnly) 1 else 0
+        val totalFilterCount = filterCount + if (showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) 1 else 0
         if (totalFilterCount != 1) {
             query = query.orderBy("timeStamp", Query.Direction.DESCENDING)
         }
@@ -210,14 +354,14 @@ class DashboardFragment : Fragment() {
                     
                     postAdapter.notifyDataSetChanged()
                     
-                    if (showMyPostsOnly && postsList.isEmpty()) {
-                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    if ((showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) && postsList.isEmpty()) {
+                        Toast.makeText(context, "No posts found for this user.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     postsList.clear()
                     postAdapter.notifyDataSetChanged()
-                    if (showMyPostsOnly) {
-                        Toast.makeText(context, "You haven't created any posts yet.", Toast.LENGTH_SHORT).show()
+                    if (showMyPostsOnly || (isCurrentUserAdmin && !filterByUserId.isNullOrEmpty())) {
+                        Toast.makeText(context, "No posts found for this user.", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(context, "No posts found.", Toast.LENGTH_SHORT).show()
                     }

@@ -20,9 +20,11 @@ data class User(
     val likes: Int = 0,
     val password: String = "",
     val tutoredCourses: List<String> = emptyList(),
-    val profileColor: String = "#4CAF50" // DEFAULT_COLOR
+    val profileColor: String = "#4CAF50", // DEFAULT_COLOR
+    val likedBy: List<String> = emptyList(), // New field for tracking likes
+    val isBanned: Boolean = false // New field for admin functionality
 ) {
-    constructor() : this("", "", "", "", "", "", "", "", Availability(), false, 0, "", emptyList())
+    constructor() : this("", "", "", "", "", "", "", "", Availability(), false, 0, "", emptyList(), "#4CAF50", emptyList(), false)
     
     // create User without password for Firestore storage
     fun toFirestoreMap(): Map<String, Any> {
@@ -42,7 +44,9 @@ data class User(
             "isAdmin" to isAdmin,
             "likes" to likes,
             "tutoredCourses" to tutoredCourses,
-            "profileColor" to profileColor
+            "profileColor" to profileColor,
+            "likedBy" to likedBy, // Add likedBy to Firestore map
+            "isBanned" to isBanned // Add isBanned to Firestore map
         )
     }
 } 

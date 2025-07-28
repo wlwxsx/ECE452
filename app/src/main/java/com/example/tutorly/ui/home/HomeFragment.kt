@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.SetOptions
+import kotlinx.coroutines.CoroutineScope
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -86,6 +87,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadUserProfileData()
+        checkAdminStatus()
         homeViewModel.name.observe(viewLifecycleOwner) { nameString -> binding.textProfileName.setText(nameString) }
         binding.logout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
@@ -102,13 +104,34 @@ class HomeFragment : Fragment() {
             val userId = currentUser.uid
             db.collection("users").document(userId).get()
                 .addOnSuccessListener { documentSnapshot ->
+                    // Check if fragment is still attached and binding is available
+                    if (!isAdded || _binding == null) return@addOnSuccessListener
+                    
                     if (documentSnapshot.exists()) {
-                        binding.textProfileName.setText(documentSnapshot.getString("name"))
-                        binding.textProfilePronouns.setText(documentSnapshot.getString("pronouns"))
-                        binding.textProfileBio.setText(documentSnapshot.getString("bio"))
-                    } else { Toast.makeText(context, "No profile created yet. Please save.", Toast.LENGTH_SHORT).show() }
+                        _binding?.textProfileName?.setText(documentSnapshot.getString("name"))
+                        _binding?.textProfilePronouns?.setText(documentSnapshot.getString("pronouns"))
+                        _binding?.textProfileBio?.setText(documentSnapshot.getString("bio"))
+                        
+                        // Load and display like count
+                        val likes = documentSnapshot.getLong("likes")?.toInt() ?: 0
+                        _binding?.likeCountText?.text = likes.toString()
+                        
+                        // Check and display admin status
+                        val isAdmin = documentSnapshot.getBoolean("isAdmin") ?: false
+                        if (isAdmin) {
+                            _binding?.adminBadge?.visibility = View.VISIBLE
+                        } else {
+                            _binding?.adminBadge?.visibility = View.GONE
+                        }
+                    } else { 
+                        Toast.makeText(context, "No profile created yet. Please save.", Toast.LENGTH_SHORT).show() 
+                    }
                 }
-                .addOnFailureListener { e -> Toast.makeText(context, "Failed to load profile: ${e.message}", Toast.LENGTH_LONG).show() }
+                .addOnFailureListener { e -> 
+                    if (isAdded) {
+                        Toast.makeText(context, "Failed to load profile: ${e.message}", Toast.LENGTH_LONG).show() 
+                    }
+                }
         }
     }
 
@@ -118,15 +141,21 @@ class HomeFragment : Fragment() {
             Toast.makeText(context, "No user logged in. Cannot save.", Toast.LENGTH_LONG).show()
             return
         }
+        
+        // Check if binding is available
+        if (_binding == null) return
+        
         val userId = currentUser.uid
-        val name = binding.textProfileName.text.toString().trim()
-        val pronouns = binding.textProfilePronouns.text.toString().trim()
-        val bio = binding.textProfileBio.text.toString().trim()
+        val name = _binding?.textProfileName?.text?.toString()?.trim() ?: ""
+        val pronouns = _binding?.textProfilePronouns?.text?.toString()?.trim() ?: ""
+        val bio = _binding?.textProfileBio?.text?.toString()?.trim() ?: ""
+        
         if (name.isEmpty()) {
-            binding.textProfileName.error = "Name cannot be empty"
-            binding.textProfileName.requestFocus()
+            _binding?.textProfileName?.error = "Name cannot be empty"
+            _binding?.textProfileName?.requestFocus()
             return
         }
+        
         val userUpdates = hashMapOf<String, Any>(
             "name" to name,
             "pronouns" to pronouns,
@@ -134,8 +163,16 @@ class HomeFragment : Fragment() {
         )
         db.collection("users").document(userId)
             .set(userUpdates, SetOptions.merge())
-            .addOnSuccessListener { Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show() }
-            .addOnFailureListener { e -> Toast.makeText(context, "Error updating profile: ${e.message}", Toast.LENGTH_LONG).show() }
+            .addOnSuccessListener { 
+                if (isAdded) {
+                    Toast.makeText(context, "Profile updated successfully!", Toast.LENGTH_SHORT).show() 
+                }
+            }
+            .addOnFailureListener { e -> 
+                if (isAdded) {
+                    Toast.makeText(context, "Error updating profile: ${e.message}", Toast.LENGTH_LONG).show() 
+                }
+            }
     }
 
     override fun onResume() {
@@ -182,14 +219,21 @@ class HomeFragment : Fragment() {
 
     private fun saveProfileColor(colorHex: String) {
         val currentUser = FirebaseAuth.getInstance().currentUser ?: return
-        updateProfileColor(binding.textProfileProfile, colorHex)
+        
+        // Check if binding is available
+        if (_binding == null) return
+        
+        updateProfileColor(_binding!!.textProfileProfile, colorHex)
         lifecycleScope.launch {
             userRepository.updateUserProfileColor(currentUser.uid, colorHex)
                 .onFailure {
                     withContext(Dispatchers.Main) {
-                        // Revert to previous color on failure by refreshing from server
-                        homeViewModel.refreshUserData()
-                        Toast.makeText(context, "Failed to save color", Toast.LENGTH_SHORT).show()
+                        // Check if fragment is still attached before updating UI
+                        if (isAdded && _binding != null) {
+                            // Revert to previous color on failure by refreshing from server
+                            homeViewModel.refreshUserData()
+                            Toast.makeText(context, "Failed to save color", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
         }
@@ -202,6 +246,25 @@ class HomeFragment : Fragment() {
             setStroke(12, Color.WHITE)
         }
         profileTextView.background = newDrawable
+    }
+
+    private fun checkAdminStatus() {
+        val currentUser: FirebaseUser? = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            CoroutineScope(Dispatchers.IO).launch {
+                val isAdmin = userRepository.isUserAdmin(userId).getOrNull() ?: false
+                withContext(Dispatchers.Main) {
+                    if (isAdded && _binding != null) {
+                        if (isAdmin) {
+                            _binding?.adminBadge?.visibility = View.VISIBLE
+                        } else {
+                            _binding?.adminBadge?.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

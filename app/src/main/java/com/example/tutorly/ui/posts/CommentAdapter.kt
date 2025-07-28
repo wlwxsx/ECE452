@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tutorly.R
 import com.example.tutorly.UserRepository
 import com.example.tutorly.ui.profile.ProfilePreviewFragment
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +28,8 @@ class CommentAdapter(
     private val currentUserId: String?,
     private val postOwnerId: String?,
     private val postStatus: String?,
-    private val onMatchClick: (String) -> Unit
+    private val onMatchClick: (String) -> Unit,
+    private val parentFragmentManager: FragmentManager
 ) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -35,15 +38,15 @@ class CommentAdapter(
         val commentContent: TextView = itemView.findViewById(R.id.comment_content)
         val matchButton: Button = itemView.findViewById(R.id.match_button)
 
-        fun profilePreview(comment: Comment) {
+        fun profilePreview(parentFragmentManager: FragmentManager, userId: String, currentUserId: String?) {
             commentAuthor.setOnClickListener {
-                val fragmentManager = (itemView.context as AppCompatActivity).supportFragmentManager
                 val dialog = ProfilePreviewFragment().apply {
                     arguments = Bundle().apply {
-                        putString("userId", comment.id)
+                        putString("userId", userId)
+                        putString("reporterUserId", currentUserId)
                     }
                 }
-                dialog.show(fragmentManager, "profile_preview")
+                dialog.show(parentFragmentManager, "profile_preview")
             }
         }
     }
@@ -111,7 +114,7 @@ class CommentAdapter(
         } else {
             holder.commentAuthor.text = "Anonymous"
         }
-        holder.profilePreview(Comment(userId))
+        holder.profilePreview(parentFragmentManager, userId, currentUserId)
     }
 
     override fun getItemCount() = comments.size
