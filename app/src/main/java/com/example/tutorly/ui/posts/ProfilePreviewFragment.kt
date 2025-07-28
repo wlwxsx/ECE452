@@ -230,38 +230,46 @@ class ProfilePreviewFragment : DialogFragment() {
         popup.window?.setBackgroundDrawableResource(android.R.color.transparent)
         cancelButton.setOnClickListener { popup.dismiss() }
         
-        if (isProfileBanned) {
-            // User is banned, show unban dialog
-            banButton.text = "Unban User"
-            reason.visibility = View.GONE
-            banButton.setOnClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = userRepository.unbanUser(reportedUserId, reporterUserId)
-                    withContext(Dispatchers.Main) {
-                        if (result.isSuccess) {
-                            Toast.makeText(context, "User unbanned successfully", Toast.LENGTH_SHORT).show()
-                            popup.dismiss()
-                            // Refresh user data and UI after unban
-                            refreshProfileUIAfterBanChange(reportedUserId)
-                        } else {
-                            Toast.makeText(context, "Failed to unban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+        // Always fetch the latest ban status from server to ensure correct popup text
+        CoroutineScope(Dispatchers.IO).launch {
+            val userResult = userRepository.getUserById(reportedUserId, forceServer = true)
+            val isCurrentlyBanned = userResult.getOrNull()?.isBanned ?: false
+            
+            withContext(Dispatchers.Main) {
+                if (isCurrentlyBanned) {
+                    // User is banned, show unban dialog
+                    banButton.text = "Unban User"
+                    reason.visibility = View.GONE
+                    banButton.setOnClickListener {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val result = userRepository.unbanUser(reportedUserId, reporterUserId)
+                            withContext(Dispatchers.Main) {
+                                if (result.isSuccess) {
+                                    Toast.makeText(context, "User unbanned successfully", Toast.LENGTH_SHORT).show()
+                                    popup.dismiss()
+                                    // Refresh user data and UI after unban
+                                    refreshProfileUIAfterBanChange(reportedUserId)
+                                } else {
+                                    Toast.makeText(context, "Failed to unban user: ${result.exceptionOrNull()?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
                         }
                     }
+                } else {
+                    // User is not banned, show ban dialog
+                    banButton.text = "Ban User"
+                    reason.visibility = View.VISIBLE
+                    banButton.setOnClickListener {
+                        val banReason = reason.text.toString().trim()
+                        if (banReason.isNotEmpty()) {
+                            banUser(popup, reportedUserId, reporterUserId, banReason)
+                            popup.dismiss()
+                        } else Toast.makeText(context, "Please provide a reason for the ban.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-        } else {
-            // User is not banned, show ban dialog
-            banButton.text = "Ban User"
-            reason.visibility = View.VISIBLE
-            banButton.setOnClickListener {
-                val banReason = reason.text.toString().trim()
-                if (banReason.isNotEmpty()) {
-                    banUser(popup, reportedUserId, reporterUserId, banReason)
-                    popup.dismiss()
-                } else Toast.makeText(context, "Please provide a reason for the ban.", Toast.LENGTH_SHORT).show()
+                popup.show()
             }
         }
-        popup.show()
     }
 
     private fun banUser(popup: AlertDialog, reportedUserId: String, reporterUserId: String, reason: String) {

@@ -67,6 +67,38 @@
                 android:textColor="#000000"
                 android:visibility="gone" />
 
+            <!-- Like Count Display -->
+            <LinearLayout
+                android:id="@+id/like_count_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#80000000"
+                android:padding="6dp">
+
+                <ImageView
+                    android:id="@+id/like_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_like"
+                    android:tint="#FFFFFF"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:id="@+id/like_count_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
         </FrameLayout>
 
         <!-- Name Field -->
