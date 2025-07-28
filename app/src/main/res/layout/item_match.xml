@@ -41,6 +41,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/match_email" />
 
+        <Button
+            android:id="@+id/close_session_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CLOSE"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/button_gray"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/match_email" />
+
         <TextView
             android:id="@+id/match_email"
             android:layout_width="0dp"

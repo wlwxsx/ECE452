@@ -191,7 +191,7 @@ class PostDetailFragment : Fragment() {
 
                 // Update button color based on content
                 if (isContentNotEmpty) {
-                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), R.color.button_gray)
+                    postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.holo_green_dark)
                 } else {
                     postCommentButton.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(requireContext(), android.R.color.darker_gray)
                 }
