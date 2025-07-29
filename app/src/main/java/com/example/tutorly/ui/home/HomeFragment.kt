@@ -123,6 +123,12 @@ class HomeFragment : Fragment() {
                         } else {
                             _binding?.adminBadge?.visibility = View.GONE
                         }
+                        
+                        // Update profile color from Firestore data
+                        val profileColor = documentSnapshot.getString("profileColor") ?: DEFAULT_COLOR
+                        _binding?.textProfileProfile?.let { profileTextView ->
+                            updateProfileColor(profileTextView, profileColor)
+                        }
                     } else { 
                         Toast.makeText(context, "No profile created yet. Please save.", Toast.LENGTH_SHORT).show() 
                     }
@@ -226,6 +232,9 @@ class HomeFragment : Fragment() {
         updateProfileColor(_binding!!.textProfileProfile, colorHex)
         lifecycleScope.launch {
             userRepository.updateUserProfileColor(currentUser.uid, colorHex)
+                .onSuccess {
+                    userRepository.clearUserFromCache(currentUser.uid)
+                }
                 .onFailure {
                     withContext(Dispatchers.Main) {
                         // Check if fragment is still attached before updating UI

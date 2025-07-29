@@ -127,6 +127,13 @@ class UserRepository {
         return try {
             db.collection("users").document(userId)
                 .update("profileColor", profileColor)
+                .await()
+            
+            // Update cache
+            userCache[userId]?.let { cachedUser ->
+                userCache[userId] = cachedUser.copy(profileColor = profileColor)
+            }
+            
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -216,6 +223,12 @@ class UserRepository {
     fun clearCache() {
         userCache.clear()
         Log.d(TAG, "User cache cleared")
+    }
+    
+    // Clear user from cache
+    fun clearUserFromCache(userId: String) {
+        userCache.remove(userId)
+        Log.d(TAG, "User removed from cache: $userId")
     }
 
     // Admin methods

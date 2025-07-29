@@ -29,14 +29,14 @@ class HomeViewModel : ViewModel() {
     }
 
     fun refreshUserData() {
-        loadUserData()
+        loadUserData(forceServer = true)
     }
 
-    private fun loadUserData() {
+    private fun loadUserData(forceServer: Boolean = false) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             viewModelScope.launch {
-                userRepository.getUserById(currentUser.uid)
+                userRepository.getUserById(currentUser.uid, forceServer)
                     .onSuccess { user ->
                         _user.value = user
                         _name.value = user?.name ?: "User Name"
